@@ -1,0 +1,18 @@
+{
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
+    "manifest_version": 2,
+    "name": "My App",
+    "permissions": [
+        "https://www.google.com/",
+        "http://www.google.com/"
+    ],
+    "version": "versionString",
+
+    "default_locale": "en",
+    "description": "A plain text description"
+
+}

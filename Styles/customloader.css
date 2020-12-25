@@ -1,0 +1,36 @@
+.cl-title {
+    height: 1vh;
+}
+
+.cl-type-container {
+    width: 30%;
+    height: 8vh;
+    margin: 4% 35%;
+    margin-bottom: 0;
+}
+
+.cl-param-value {
+    line-height: 4vh;
+}
+
+.cl-param-container {
+    width: 30%;
+    height: 8vh !important;
+    margin: 4% 1.66%;
+    margin-bottom: 0;
+}
+
+.cl-units {
+    width: 47.5% !important;
+    margin: 7% 0 5% 1.66%;
+    float: left;
+}
+
+.cl-upload {
+    width: 47.5%;
+    height: 8%;
+    margin: 7% 1.66% 5% 0;
+    font-size: 2.6vh;
+    border: 1px solid black;
+    float: right;
+}

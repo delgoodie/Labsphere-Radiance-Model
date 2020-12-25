@@ -1,0 +1,26 @@
+.output-container {
+    border: .15vmax solid black;
+    display: block;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.output-container-dark {
+    background-color: black;
+    border-color: white;
+}
+
+.output-container::-webkit-scrollbar {
+    display: none;
+}
+
+.output-parameter {
+    width: 35%;
+    height: 25%;
+    margin: 2% 7.5%;
+}
+
+.output-param-div {
+    font-size: 2.5vh !important;
+}

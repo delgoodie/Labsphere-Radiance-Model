@@ -1,0 +1,30 @@
+.lu-param-wide {
+    width: 95%;
+    margin: 2.5% 2.5%;
+    height: 10vh;
+}
+
+.lu-param-short {
+    width: 45%;
+    margin: 2.5% 2.5%;
+    height: 10vh;
+}
+
+.lu-button {
+    float: left;
+    display: block;
+    width: 50%;
+    text-align: center;
+    margin: 1.5% 25%;
+    padding: 3% 0;
+    background-color: rgb(27, 117, 188);
+    color: white;
+    font-size: 2.5vh;
+    border-radius: 5vh;
+    cursor: pointer;
+}
+
+.lu-button-dark {
+    background-color: rgb(247, 148, 30);
+    color: black;
+}

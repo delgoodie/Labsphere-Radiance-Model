@@ -1,0 +1,114 @@
+.table-container {
+    display: block;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    box-sizing: border-box;
+}
+
+.table-container table,
+.table-container td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.table-container::-webkit-scrollbar {
+    display: none;
+}
+
+.table-table {
+    width: 100%;
+    float: left;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.table-table-dark {
+    float: left;
+}
+
+.table-header {
+    border: 1px solid black;
+    padding: 1% 0;
+    color: white;
+    background-color: rgb(27, 117, 188);
+    font-size: 1.6vh;
+    font-weight: 500;
+    width: 27%;
+}
+
+.table-header-dark {
+    border-color: white;
+    color: black;
+    background-color: rgb(247, 148, 30) !important;
+}
+
+.table-row {
+    box-sizing: border-box;
+    height: 4vh;
+}
+
+.table-value {
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.table-value-dark {
+    border-color: white;
+}
+
+.table-derived {
+    padding: 2% 0;
+    padding-left: 5%;
+    text-align: left;
+    font-size: 1.6vh !important;
+    border: 1px solid black;
+    background-color: white;
+}
+
+.table-derived-dark {}
+
+.table-input {
+    width: 90%;
+    height: 100%;
+    padding: 0;
+    padding-left: 10%;
+    text-align: left;
+    border: none;
+    font-size: 1.6vh !important;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.table-input-dark {
+    background-color: black !important;
+    color: white;
+    border-color: white;
+}
+
+.table-add-button {
+    cursor: pointer;
+    width: 5vw;
+    height: 5vh;
+    background-color: grey;
+    float: left;
+    text-align: center;
+    font-size: 2vmax !important;
+    background-color: rgb(27, 117, 188);
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    border: .05vmax solid black;
+    border-width: 1px;
+    border-left: hidden;
+    border-bottom-right-radius: 15px;
+    border-bottom-left-radius: 15px;
+    color: white;
+    box-sizing: border-box;
+    border-top: none;
+}
+
+.table-add-button-dark {
+    background-color: black;
+    border-color: white;
+    color: white;
+}

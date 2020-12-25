@@ -1,0 +1,192 @@
+/* #region TAB */
+
+.req-bar {
+    width: 100%;
+    height: 7.5%;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-direction: row;
+}
+
+.req-tab-header {
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+    line-height: 3.5vh;
+    height: 100%;
+    text-align: center;
+    font-size: 2vh;
+    box-sizing: border-box;
+    background-color: lightgray;
+    width: 33.333%;
+}
+
+.req-bar :nth-child(3) {
+    border-right: none;
+}
+
+.req-tab-question {
+    width: 2.5vmin;
+    height: 2.5vmin;
+    display: block;
+    float: right;
+    margin: 0% 2%;
+    margin-top: 3%;
+    cursor: pointer;
+}
+
+.req-tab-delete {
+    width: 2.5vmin;
+    height: 2.5vmin;
+    display: block;
+    float: right;
+    margin: 0% 2%;
+    margin-top: 3%;
+    cursor: pointer;
+}
+
+.req-tab-upload {
+    width: 2.5vmin;
+    height: 2.5vmin;
+    display: block;
+    float: right;
+    margin: 0% 2%;
+    margin-top: 3%;
+    cursor: pointer;
+}
+
+.req-tab-container {
+    display: block;
+    width: 100%;
+    height: 92.5%;
+    margin: 0;
+    overflow-y: hidden;
+    padding-top: 10%;
+}
+
+.req-tab-title {
+    display: block;
+    box-sizing: border-box;
+    height: 6vh;
+    border: 1px solid black;
+    width: calc(95% + 1px);
+    margin: 0 auto;
+    font-size: 2.7vh;
+    text-align: center;
+    line-height: 6vh;
+    border-top-left-radius: 2vmax;
+    border-top-right-radius: 2vmax;
+    border-bottom: none;
+}
+
+.req-tab-title-dark {
+    border-color: white;
+    color: white;
+}
+
+
+/* #endregion */
+
+
+/* #region IRRADIANCE */
+
+.req-irradiance-content {
+    display: block;
+    width: calc(95% + 1px);
+    height: 75%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.req-irradiance-content :nth-child(3) {
+    border-right: none;
+}
+
+.req-irradiance-content :nth-child(1) {
+    border-right: none;
+}
+
+.req-irradiance-param-container {
+    padding: 0;
+    margin: 0;
+    width: 50%;
+    height: 6vh;
+    float: left;
+    margin-top: -1px;
+}
+
+.req-irradiance-param-field {
+    font-size: 2.2vh;
+    width: 70% !important;
+    line-height: 5.5vh;
+}
+
+.req-irradiance-param-value {
+    padding: 0;
+    width: 30% !important;
+    height: 100% !important;
+    font-size: 2.5vh !important;
+    line-height: 5.5vh;
+}
+
+
+/*#endregion */
+
+
+/* #region TABLE */
+
+.req-table-container {
+    display: block;
+    width: calc(95% + 1px);
+    height: 75%;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.req-table-header {
+    height: 5vh;
+    font-size: 2.2vh;
+}
+
+.req-table-value {
+    height: 5vh;
+}
+
+.req-table-value input {
+    font-size: 2.5vh !important;
+}
+
+
+/* #endregion */
+
+.req-upload {
+    width: 80%;
+    margin: 0 10%;
+    height: 4.5vh !important;
+    border: 1px solid black;
+    font-size: 2vh;
+}
+
+.req-upload-dark {
+    border-color: white !important;
+}
+
+.req-upload-container {
+    background-color: white;
+    width: 25vw;
+    height: 30vh;
+    position: absolute !important;
+    z-index: 10;
+    border: 1vmin solid grey;
+    border-radius: 4vmin;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+}
+
+.req-upload-units {
+    width: 77% !important;
+    margin: 5% 15%;
+    float: left;
+}
