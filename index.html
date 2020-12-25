@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 
 <head>
-    <script src='https://kit.fontawesome.com/ce8ae231c2.js' crossorigin='anonymous'></script>
-    <!--
-    -->
+    <!--CDNs-->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src='https://kit.fontawesome.com/ce8ae231c2.js' crossorigin='anonymous'></script>    
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js'></script>
+    
+    <!--Downloaded Styles-->
     <link rel='stylesheet' href='Resources/Scripts/jquery-ui-1.12.1/jquery-ui.css'>
     <link rel='stylesheet' href='Resources/Scripts/jquery-ui-1.12.1/jquery-ui.structure.min.css'>
     <link rel='stylesheet' href='Resources/Scripts/jquery-ui-1.12.1/jquery-ui.theme.min.css'>
-
+    
+    <!--Custom Styles-->
     <link rel='stylesheet' href='Styles/style.css'>
     <link rel='stylesheet' href='Styles/table.css'>
     <link rel='stylesheet' href='Styles/parameter.css'>
@@ -29,6 +34,8 @@
 
 <body>
     <a href='mailto:wdelgiudice@labsphere.com' id='feedback-link'>Feedback</a>
+    
+    <!--Data-->
     <script src='Resources/Data/CCTbarData.js'></script>
     <script src='Resources/Data/CCTData.js'></script>
     <script src='Resources/Data/FluxData.js'></script>
@@ -39,29 +46,30 @@
     <script src='Resources/Data/VLambdaData.js'></script>
     <script src='Resources/Data/WavelengthData.js'></script>
     <script src='Resources/Data/CCTColorData.js'></script>
-
+    
+    <!--References-->
     <script src='Scripts/References/Constants.js'></script>
     <script src='Scripts/References/Lamp.js'></script>
     <script src='Scripts/References/Calculator.js'></script>
     <script src='Scripts/References/IO.js'></script>
-
+    
     <script src='Resources/Data/HeliosModelData.js'></script>
-
+    
+    <!--Downloaded Resources-->
     <script src='Resources/Scripts/plotly-latest.min.js'></script>
     <script src='Resources/Scripts/jquery.js'></script>
     <script src='Resources/Scripts/jquery-ui-1.12.1/jquery-ui.min.js'></script>
-
-    <!--make these downloaded-->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-csv/0.71/jquery.csv-0.71.min.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js'></script>
-
+    
+    
+    <!--UI-->
     <script src='Scripts/UI/Pane.js'></script>
     <script src='Scripts/UI/Table.js'></script>
     <script src='Scripts/UI/Parameter.js'></script>
     <script src='Scripts/UI/Button.js'></script>
     <script src='Scripts/UI/LampSelector.js'></script>
     <script src='Scripts/UI/Units.js'></script>
-
+    
+    <!--Widgets-->
     <script src='Scripts/Widgets/ProjectFolder.js'></script>
     <script src='Scripts/Widgets/Graph.js'></script>
     <script src='Scripts/Widgets/LampTable.js'></script>
@@ -70,9 +78,11 @@
     <script src='Scripts/Widgets/Output.js'></script>
     <script src='Scripts/Widgets/LampUpload.js'></script>
     <script src='Scripts/Widgets/CustomLoader.js'></script>
-
+    
+    <!--Tabs-->
     <script src='Scripts/Tabs/Model.js'></script>
-
+    
+    <!--Manager-->
     <script src='Scripts/Manager.js'></script>
 </body>
 
