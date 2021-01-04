@@ -1,6 +1,6 @@
 class Parameter {
-    static DOWN = 0;
-    static RIGHT = 1;
+    static get DOWN() { return 0; }
+    static get RIGHT() { return 1; }
     constructor(_top, _parent, _classes = {}, _field = '', _direction = Parameter.DOWN, _updateValue = () => {}, d = {}) {
         this.top = _top;
         this.parent = _parent;

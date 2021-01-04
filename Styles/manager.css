@@ -105,6 +105,8 @@
     padding: 0;
     padding-left: .5%;
     float: left;
+    position: relative;
+    bottom: -.3vh;
 }
 
 .tab-bar li {
@@ -141,7 +143,7 @@
 }
 
 .tab-bar i {
-    font-size: 3vh;
+    font-size: 2.8vh;
 }
 
 .selected-tab {

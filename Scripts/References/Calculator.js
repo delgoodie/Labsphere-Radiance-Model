@@ -1,5 +1,5 @@
-class Calculator {
-    static Units = {
+var Calculator = {
+    Units: {
         Default: {
             length: Length.IN,
             wavelength: Length.NM,
@@ -187,9 +187,9 @@ class Calculator {
             }
             return Math.round(final * Math.pow(10, sigFigs)) / Math.pow(10, sigFigs);
         }
-    }
+    },
 
-    static Model = {
+    Model: {
         Blackbody(i, blackbody_ON, designed_EB_Power, applied_EB_Temp, designed_EB_Temp) {
             if (blackbody_ON) {
                 let y = .25; //wavelength(i);
@@ -268,19 +268,19 @@ class Calculator {
             return sum * increment;
         },
 
-        SpectralReverse(pD, sD, mat, lt, ut, units) {
+        SpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
             let model;
             let reset = () => model = {
                 name: '',
                 lamps: [],
-                portDiameter: pD,
-                sphereDiameter: sD,
-                material: mat,
-                portCount: Calculator.Model.GetNumPorts(sD),
-                qty: [...new Array(Calculator.Model.GetNumPorts(sD))].map(_ => 1),
-                onQty: [...new Array(Calculator.Model.GetNumPorts(sD))].map(_ => 1),
+                portDiameter: startModel.portDiameter,
+                sphereDiameter: startModel.sphereDiameter,
+                material: startModel.material,
+                portCount: startModel.portCount,
+                qty: [...new Array(startModel.portCount)].map(_ => 1),
+                onQty: [...new Array(startModel.portCount)].map(_ => 1),
             };
             reset();
 
@@ -291,9 +291,9 @@ class Calculator {
 
             let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
             let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
-            while (true) {
+            for (;;) {
                 iteration++;
-                if (iteration > 5) {
+                if (iteration > 10) {
                     if (target != ut && target != lt) target = lt;
                     else if (target == lt) target = ut;
                     else if (target == ut) {
@@ -308,10 +308,9 @@ class Calculator {
                     let bestLamp, minError;
                     let offset = Calculator.Trace.Difference(target, Calculator.Trace.Model(model));
                     let targetFlux = offset.y.map((r, i) => r / Calculator.Model.Reflectance(offset.x[i], model, units) * (Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM)) * (1 - Calculator.Model.Reflectance(offset.x[i], model, units) * Calculator.Model.WallFraction(model, units))));
-
                     Object.getOwnPropertyNames(LampData).forEach((name, i) => {
-                        let error = Calculator.Trace.Error(target, { x: target.x, y: FluxData[name], units: target.units });
-                        if (i != 0) {
+                        let error = Calculator.Trace.Error({ x: target.x, y: targetFlux, units: target.units }, { x: target.x, y: FluxData[name], units: target.units });
+                        if (bestLamp !== undefined) {
                             if (error < minError) {
                                 minError = error;
                                 bestLamp = name;
@@ -324,7 +323,6 @@ class Calculator {
                     model.lamps[index] = bestLamp;
                     index = (index + 1) % model.portCount;
                 }
-
             }
         },
 
@@ -381,9 +379,9 @@ class Calculator {
         GetWavelength(units) {
             return [...new Array(2250)].map((_, i) => 250 + i).map(w => Calculator.Units.Convert(w, Length.NM, units.wavelength));
         },
-    }
+    },
 
-    static Math = {
+    Math: {
         Round(val, figs) {
             return Math.round(val * Math.pow(10, figs)) / Math.pow(10, figs);
         },
@@ -438,9 +436,9 @@ class Calculator {
         Irradiance(wA, wB, d, mdl, units) {
             return Calculator.Model.IntegralRadiance(wA, wB, mdl, units) * Math.PI * (d == 0 ? 1 : Math.pow(Math.sin(Math.atan(Calculator.Units.Convert(mdl.portDiameter, units.length, Length.M) / (2 * d))), 2));
         },
-    }
+    },
 
-    static Trace = {
+    Trace: {
         Compare(t1, t2, tF = (y1, y2) => y1 == y2, every = true) {
             let passed = every;
             for (let i = 0; i < t1.x.length; i++)
@@ -542,4 +540,4 @@ class Calculator {
             }
         },
     }
-}
+};

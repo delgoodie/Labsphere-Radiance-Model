@@ -75,7 +75,7 @@ class Manager {
 
 
         if (foundStorage) this.openProject(localStorage.getItem('current'));
-        $(this.projectFolder.element).slideDown(slideSpeed);
+        //$(this.projectFolder.element).slideDown(slideSpeed);
     }
 
     get globalTraces() {
@@ -178,11 +178,11 @@ class Manager {
         let settingsObj = JSON.parse(localStorage.getItem('settings'));
         if (!settingsObj) {
             this.darkMode.val = false;
-            this.customLamps = {};
+            //this.customLamps = {};
             return;
         }
         this.darkMode.val = settingsObj.darkMode;
-        this.customLamps = settingsObj.customLamps;
+        //this.customLamps.val = settingsObj.customLamps;
         /*
         Object.getOwnPropertyNames(settingsObj.customLamps).forEach(n => {
             LampData[n] = settingsObj.customLamps[n].lampData;
@@ -245,15 +245,15 @@ class Manager {
         let settingsObj = {
             activeProject: this.current,
             darkMode: this.darkMode.val,
-            customLamps: this.customLamps.val,
+            //customLamps: this.customLamps.val,
         }
         localStorage.setItem('settings', JSON.stringify(settingsObj));
     }
 
     addCustomLamp(name) {
-        this.customLamps[name] = {};
-        this.customLamps[name].lampData = LampData[name];
-        this.customLamps[name].fluxData = FluxData[name];
+        //this.customLamps[name] = {};
+        //this.customLamps[name].lampData = LampData[name];
+        //this.customLamps[name].fluxData = FluxData[name];
     }
 }
 
@@ -274,14 +274,3 @@ function CreateElement(_type, _parent, _class, _text) {
     if (_parent) $(_parent).append(ret);
     return ret;
 }
-
-
-function justify(text, l) {
-    return [...new Array(text.length)].reduce(o => ({ before: o.before.indexOf(' ') != -1 ? o.before.substring(o.before.indexOf(' ') + 1) : '', after: o.after.concat([o.before.substring(0, o.before.indexOf(' ') != -1 ? o.before.indexOf(' ') : o.before.length)]) }), { before: text, after: [] }).after.reduce((acc, v) => acc += v + (acc.length + v.length - acc.lastIndexOf('\n') > l ? '\n' : ' '), '');
-}
-
-function justRE(text, l) {
-    return [...text.matchAll(/(?<=\s)\w+(?=\s)/g)].map(r => r[0]).reduce((acc, v) => acc += v + (acc.length + v.length - acc.lastIndexOf('\n') > l ? '\n' : ' '), '');
-}
-
-//console.log(justRE('a long string of text is justifyable but how will it handle extremelyextralongextreme long words', 10));

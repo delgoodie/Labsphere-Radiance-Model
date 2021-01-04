@@ -21,6 +21,10 @@
     margin: 2% 7.5%;
 }
 
-.output-param-div {
-    font-size: 2.5vh !important;
+.output-container :nth-child(2) {
+    border-right: 1px solid black;
+}
+
+.output-container :nth-child(4) {
+    border-right: 1px solid black;
 }

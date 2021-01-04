@@ -174,7 +174,7 @@ class Model {
     }
 
     reverse() {
-        let model = Calculator.Model.SpectralReverse(this.portDiameter.val, this.sphereDiameter.val * 1, this.material.val, Calculator.Trace.Convert(this.requirements.lowerSpectral, this.units), Calculator.Trace.Convert(this.requirements.upperSpectral, this.units), this.units);
+        let model = Calculator.Model.SpectralReverse(this.model, Calculator.Trace.Convert(this.requirements.lowerSpectral, this.units), Calculator.Trace.Convert(this.requirements.upperSpectral, this.units), this.units);
         if (model) {
             this.model = model;
             this.type = 'Calculated Model';

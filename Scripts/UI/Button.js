@@ -1,6 +1,6 @@
 class Button {
-    static TOGGLE = 0;
-    static ACTION = 1;
+    static get TOGGLE() { return 0; }
+    static get ACTION() { return 1; }
     constructor(_top, _parent, _icon = '', _type = Button.ACTION, _updateValue = (i = false) => {}, _d = {}) {
         this.top = _top;
         this.parent = _parent;
