@@ -68,6 +68,6 @@ class LampUpload {
     update() {}
 
     toggleDarkMode(s) {
-        $(this.uploadButton).toggleClass('lu-button-dark', s);
+        $(this.uploadButton).toggleClass('dark3', s);
     }
 }

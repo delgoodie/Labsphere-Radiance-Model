@@ -63,7 +63,7 @@ class LampTable {
         for (let i = 0; i < 5 + (useQty ? 1 : 0); i++) {
             th.push(document.createElement('th'));
             $(th[i]).addClass('lt-header');
-            if (this.top.darkMode.val) $(th[i]).addClass('lt-header-dark');
+            if (this.top.darkMode.val) $(th[i]).addClass('dark3');
             if (!this.editable) $(th[i]).addClass('lt-header-gray');
         }
 
@@ -89,7 +89,7 @@ class LampTable {
             for (let j = 0; j < 5 + (useQty ? 1 : 0); j++) {
                 td.push(document.createElement('td'));
                 $(td[j]).addClass('lt-val');
-                if (this.top.darkMode.val) $(td[j]).addClass('lt-val-dark');
+                if (this.top.darkMode.val) $(td[j]).addClass('dark1');
                 // if (this.top.settings.grayMode) $(td[j]).addClass('lt-val-gray');
             }
 
@@ -103,7 +103,7 @@ class LampTable {
                 let qty = document.createElement('input');
                 $(qty).attr('type', 'text');
                 $(qty).addClass('lt-qty-input');
-                if (this.top.darkMode.val) $(qty).addClass('lt-qty-input-dark');
+                if (this.top.darkMode.val) $(qty).addClass('dark1');
                 $(qty).val(this.qty[i]);
                 $(td[2]).addClass('lt-qty');
                 $(td[2]).append(qty);
@@ -111,7 +111,7 @@ class LampTable {
                 let onQty = document.createElement('input');
                 $(onQty).attr('type', 'text');
                 $(onQty).addClass('lt-qty-input');
-                if (this.top.darkMode.val) $(onQty).addClass('lt-qty-input-dark');
+                if (this.top.darkMode.val) $(onQty).addClass('dark1');
                 $(onQty).val(this.onQty[i]);
                 $(td[3]).addClass('lt-qty');
                 $(td[3]).append(onQty);
@@ -154,7 +154,7 @@ class LampTable {
         if (useQty) {
             let tr = CreateElement('tr', this.table, 'lt-row');
             let add = CreateElement('td', tr, 'lt-add-button', '+');
-            if (this.top.darkMode.val) $(add).addClass('lt-add-button-dark');
+            if (this.top.darkMode.val) $(add).addClass('dark3');
             $(add).on('click', function() {
                 this.lamps.push('Empty');
                 this.qty.push(0);
@@ -165,7 +165,7 @@ class LampTable {
             [0, 0, 0, 0].forEach(_ => CreateElement('td', tr));
 
             let remove = CreateElement('td', tr, 'lt-remove-button', '-');
-            if (this.top.darkMode.val) $(remove).addClass('lt-remove-button-dark');
+            if (this.top.darkMode.val) $(remove).addClass('dark3');
             $(tr).append(remove);
             $(remove).on('click', function() {
                 this.lamps.pop();
@@ -188,7 +188,7 @@ class LampTable {
     }
 
     toggleDarkMode(s) {
-        $(this.element).toggleClass('lt-container-dark', s);
+        $(this.element).toggleClass('dark1', s);
     }
 
 }

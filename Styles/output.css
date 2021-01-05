@@ -6,11 +6,6 @@
     scrollbar-width: none;
 }
 
-.output-container-dark {
-    background-color: black;
-    border-color: white;
-}
-
 .output-container::-webkit-scrollbar {
     display: none;
 }
@@ -19,12 +14,4 @@
     width: 35%;
     height: 25%;
     margin: 2% 7.5%;
-}
-
-.output-container :nth-child(2) {
-    border-right: 1px solid black;
-}
-
-.output-container :nth-child(4) {
-    border-right: 1px solid black;
 }

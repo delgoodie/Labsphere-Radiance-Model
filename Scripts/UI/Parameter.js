@@ -59,11 +59,11 @@ class Parameter {
     }
 
     toggleDarkMode(s) {
-        $(this.element).toggleClass('param-container-dark', s);
+        $(this.element).toggleClass('dark1', s);
         if ('darkContainer' in this.classes) $(this.element).toggleClass(this.classes.darkContainer, s);
 
-        $(this.field).toggleClass('param-field-dark', s);
-        $(this.value).toggleClass('param-value-dark', s);
+        $(this.field).toggleClass('dark3', s);
+        $(this.value).toggleClass('dark1', s);
     }
 }
 

@@ -68,10 +68,9 @@ class LampSelector extends Pane {
     }
 
     toggleDarkMode(s) {
-        $(this.element).toggleClass('ls-container-dark', s);
-        $(this.title).toggleClass('ls-title-dark', s);
-        $(this.close).toggleClass('ls-close-dark', s);
-        $(this.select).toggleClass('ls-select-dark', s);
+        $(this.element).toggleClass('dark1', s);
+        $(this.title).toggleClass('dark3', s);
+        $(this.select).toggleClass('dark3', s);
         this.update();
     }
 }

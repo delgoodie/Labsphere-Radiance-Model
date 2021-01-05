@@ -8,9 +8,6 @@ class Manager {
         this.projects = {};
         this.wiping = false;
 
-        // merge settings into manager, add upload lamp and manual / handbook to settings bar
-
-        //#region SETUP
         this.head = CreateElement('div', this.element, 'manager-header');
 
         this.body = CreateElement('div', this.element, 'manager-body');
@@ -43,9 +40,9 @@ class Manager {
 
         this.darkMode = new Button(this, settings, 'moon manager-settings-button', Button.TOGGLE, s => this.toggleDarkMode(s), { state: false, tooltip: ['Light Mode', 'Dark Mode'] });
 
-        this.addLamp = new Button(this, settings, 'lightbulb manager-settings-button', Button.ACTION, () => {});
+        this.addLamp = new Button(this, settings, 'lightbulb manager-settings-button', Button.ACTION, () => {}, { tooltip: 'Add Custom Lamp' });
 
-        this.docs = new Button(this, settings, 'question manager-settings-button', Button.ACTION, () => {});
+        this.docs = new Button(this, settings, 'question manager-settings-button', Button.ACTION, () => window.open('docs.html'), { tooltip: 'Docs' });
 
         this.darkModeEvent = new CustomEvent('darkMode', { bubbles: false, detail: { state: false } });
 
@@ -218,8 +215,8 @@ class Manager {
         this.darkModeEvent.detail.state = s;
         document.body.dispatchEvent(this.darkModeEvent);
 
-        $(this.element).toggleClass('body-dark', s);
-        $(this.projectHeader).toggleClass('manager-proj-title-dark', s);
+        $(this.element).toggleClass('dark1', s);
+        $(this.projectHeader).toggleClass('dark2', s);
         this.createTabList();
     }
 

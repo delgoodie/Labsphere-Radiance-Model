@@ -74,9 +74,8 @@ class Pane {
     }
 
     defaultToggleDarkMode(s) {
-        $(this.element).toggleClass('pane-container-dark', s);
+        $(this.element).toggleClass('dark1', s);
         $(this.title).toggleClass('pane-title-dark', s);
-        $(this.close).toggleClass('pane-close-dark', s);
-        $(this.select).toggleClass('pane-select-dark', s);
+        $(this.select).toggleClass('dark3', s);
     }
 }

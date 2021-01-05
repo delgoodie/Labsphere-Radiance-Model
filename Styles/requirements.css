@@ -26,16 +26,6 @@
     border-right: none;
 }
 
-.req-tab-question {
-    width: 2.5vmin;
-    height: 2.5vmin;
-    display: block;
-    float: right;
-    margin: 0% 2%;
-    margin-top: 3%;
-    cursor: pointer;
-}
-
 .req-tab-delete {
     width: 2.5vmin;
     height: 2.5vmin;
@@ -78,11 +68,6 @@
     border-top-left-radius: 2vmax;
     border-top-right-radius: 2vmax;
     border-bottom: none;
-}
-
-.req-tab-title-dark {
-    border-color: white;
-    color: white;
 }
 
 
@@ -166,23 +151,6 @@
     height: 4.5vh !important;
     border: 1px solid black;
     font-size: 2vh;
-}
-
-.req-upload-dark {
-    border-color: white !important;
-}
-
-.req-upload-container {
-    background-color: white;
-    width: 25vw;
-    height: 30vh;
-    position: absolute !important;
-    z-index: 10;
-    border: 1vmin solid grey;
-    border-radius: 4vmin;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
 }
 
 .req-upload-units {

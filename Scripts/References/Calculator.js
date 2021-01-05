@@ -418,11 +418,11 @@ var Calculator = {
         },
 
         Lumens(mdl, units) {
-            return VLambdaData.reduce((sum, vlambda, i) => sum += mdl.lamps.reduce((lsum, l, j) => lsum += Lamp.getLamp(l).flux(i) * mdl.onQty[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
+            return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Lamp.getLamp(l).flux(i) * mdl.onQty[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
         },
 
         FootLamberts(mdl, units) {
-            return Calculator.Math.Candelas(mdl, units) / 3.426;
+            return Calculator.Math.Candelas(mdl, units) * 0.291885581;
         },
 
         Lux(mdl, units) {
@@ -512,13 +512,15 @@ var Calculator = {
         },
 
         Model(mdl, units = Calculator.Units.Default) {
+            let wav = Calculator.Model.GetWavelength(units);
+            let wF = Calculator.Model.WallFraction(mdl, units);
+            let piSA = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(mdl.sphereDiameter, units.length, Length.CM));
+            let ref = mdl.material == Material.Spectraflect ? ReflectanceData.BaSO4 : (mdl.material == Material.Spectralon ? ReflectanceData.PTFE : (mdl.material == Material.Gold ? ReflectanceData.Gold : ReflectanceData.Permaflect));
             return {
                 name: mdl.name,
-                x: Calculator.Model.GetWavelength(units),
-                y: Calculator.Model.GetWavelength(units).map((_, i) => {
-                    let ref = mdl.material == Material.Spectraflect ? ReflectanceData.BaSO4[i] : (mdl.material == Material.Spectralon ? ReflectanceData.PTFE[i] : (mdl.material == Material.Gold ? ReflectanceData.Gold[i] : ReflectanceData.Permaflect[i]));
-
-                    let wcm = (ref * (mdl.lamps.reduce((sum, l, index) => sum += Lamp.getLamp(l).flux(i) * mdl.onQty[index], 0) /* + blackbody flux */ )) / (Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(mdl.sphereDiameter, units.length, Length.CM)) * (1 - ref * Calculator.Model.WallFraction(mdl, units)));
+                x: wav,
+                y: wav.map((_, i) => {
+                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Lamp.getLamp(l).flux(i) * mdl.onQty[index], 0) /* + blackbody flux */ )) / (piSA * (1 - ref[i] * wF));
                     return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
                 }),
                 units: units,

@@ -211,9 +211,11 @@ class Model {
     }
 
     update() {
+        let trace = this.trace;
+        let model = this.model;
         this.units = this.graph.units.get;
 
-        let pf = Calculator.Math.Round(100 * (1 - Calculator.Model.WallFraction(this.model, this.units)), 2);
+        let pf = Calculator.Math.Round(100 * (1 - Calculator.Model.WallFraction(model, this.units)), 2);
         this.portFraction.val = pf + '%';
         this.portRatio.val = Calculator.Math.Round(this.portDiameter.val / this.sphereDiameter.val, 2);
         let tp = 0;
@@ -231,10 +233,10 @@ class Model {
 
         this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
         this.lampTable.update(this.portCount.val);
-        this.requirements.update(this.model, this.units);
-        this.graph.update([this.trace].concat(this.requirements.traces).concat(this.top.globalTraces.filter(t => t.id != this.trace.id)), this.units, this.type);
-        this.output.update(this.model, this.units);
-        this.visual.update(this.model, this.units);
+        this.requirements.update(model, trace, this.units);
+        this.graph.update([trace].concat(this.requirements.traces).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type);
+        this.output.update(model, this.units);
+        this.visual.update(model, this.units);
     }
 
     save() {

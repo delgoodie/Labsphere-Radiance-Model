@@ -20,8 +20,8 @@ class Graph {
 
         this.download = new Button(this.top, this.element, 'file-download graph-button', Button.ACTION, () => this.updateValue('download'), { tooltip: 'Download' });
         this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
-        this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'));
-        this.load = new Button(this.top, this.element, 'dot-circle graph-button', Button.ACTION, () => this.updateValue('model'));
+        this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'), { tooltip: 'Calculate Reverse Model' });
+        this.load = new Button(this.top, this.element, 'dot-circle graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
 
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }
@@ -72,6 +72,6 @@ class Graph {
     }
 
     toggleDarkMode(s) {
-        $(this.element).toggleClass('graph-container-dark', s);
+        $(this.element).toggleClass('dark1', s);
     }
 }

@@ -54,7 +54,7 @@ class Table {
             let h = document.createElement('th');
             $(h).addClass('table-header');
             if ('header' in this.classes) $(h).addClass(this.classes.header);
-            if (this.top.darkMode.val) $(h).addClass('table-header-dark');
+            if (this.top.darkMode.val) $(h).addClass('dark3');
             $(h).text(name);
             $(htr).append(h);
         });
@@ -108,6 +108,6 @@ class Table {
     }
 
     toggleDarkMode(s) {
-        $(this.addButton).toggleClass('table-add-button-dark', s);
+        $(this.addButton).toggleClass('dark1', s);
     }
 }

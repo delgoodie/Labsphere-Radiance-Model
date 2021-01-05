@@ -18,21 +18,21 @@ class Units {
         $(unitHeader).text('Units');
         $(this.element).append(unitHeader);
 
-        this.powerUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'unit-param-container-dark' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['W', 'mW'], value: 'W' });
+        this.powerUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'dark1' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['W', 'mW'], value: 'W' });
 
         let divide = document.createElement('div');
         $(divide).addClass('unit-operator');
         $(divide).text('/');
         $(this.element).append(divide);
 
-        this.lengthUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'unit-param-container-dark' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['cm', 'm'], value: 'cm' });
+        this.lengthUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'dark1' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['cm', 'm'], value: 'cm' });
 
         let square = document.createElement('div');
         $(square).text(String.fromCharCode(parseInt('00B2', 16)));
         $(square).addClass('unit-operator');
         $(this.element).append(square);
 
-        this.wavelengthUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'unit-param-container-dark' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['nm', 'µm'], value: 'nm' });
+        this.wavelengthUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'dark1' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['nm', 'µm'], value: 'nm' });
         let sr = document.createElement('div');
         $(sr).text('sr');
         $(sr).addClass('unit-operator');
@@ -57,7 +57,7 @@ class Units {
     }
 
     toggleDarkMode(s) {
-        $('.unit-operator').toggleClass('unit-operator-dark', s);
-        $('.unit-header').toggleClass('unit-header-dark', s);
+        $('.unit-operator').toggleClass('dark1', s);
+        $('.unit-header').toggleClass('dark3', s);
     }
 }

@@ -64,6 +64,6 @@ class Visual {
 
 
     toggleDarkMode(s) {
-        $(this.element).toggleClass('visual-container-dark', s);
+        $(this.element).toggleClass('dark1', s);
     }
 }

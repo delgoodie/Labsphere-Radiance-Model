@@ -11,10 +11,6 @@
     border-right: none;
 }
 
-.unit-param-container-dark {
-    border-color: white;
-}
-
 .unit-field {
     line-height: 4vh;
     width: 0 !important;
@@ -62,16 +58,4 @@
     font-size: 2.3vh;
     line-height: 3.8vh;
     border-right: 1px solid black;
-}
-
-.unit-header-dark {
-    background-color: rgb(247, 148, 30);
-    color: black;
-    border-color: white;
-}
-
-.unit-operator-dark {
-    background-color: black;
-    color: white;
-    border-color: white;
 }

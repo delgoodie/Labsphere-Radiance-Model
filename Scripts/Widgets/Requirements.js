@@ -234,7 +234,7 @@ class Requirements {
         }
     }
 
-    update(mdl, units) {
+    update(mdl, trace, units) {
         if (this.units.wavelength != units.wavelength || this.units.radiance != units.radiance || this.units.length != units.length) {
             for (let i = 0; i < this.inbandTable.values['Wavelength A'].length; i++) {
                 this.inbandTable.values['Wavelength A'][i] = Calculator.Units.Convert(this.inbandTable.values['Wavelength A'][i], this.units.wavelength, units.wavelength);
@@ -252,9 +252,9 @@ class Requirements {
 
         this.irradianceP.val = Calculator.Math.Round(Calculator.Math.Irradiance(this.irradianceWA.val, this.irradianceWB.val, this.irradianceD.val, mdl, units), 2);
 
-        this.lowerSpectral.color = Calculator.Trace.Compare(this.lowerSpectral, Calculator.Trace.Model(mdl, units), (y1, y2) => y1 < y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.lowerSpectral.color = Calculator.Trace.Compare(this.lowerSpectral, trace, (y1, y2) => y1 < y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
-        this.upperSpectral.color = Calculator.Trace.Compare(this.upperSpectral, Calculator.Trace.Model(mdl, units), (y1, y2) => y1 > y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.upperSpectral.color = Calculator.Trace.Compare(this.upperSpectral, trace, (y1, y2) => y1 > y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
         this.bands.forEach((b, i) => b.color = this.inbandTable.values['Predicted'][i] >= this.inbandTable.values['Required'][i] ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)');
 

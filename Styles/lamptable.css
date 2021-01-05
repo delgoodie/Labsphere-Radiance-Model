@@ -3,10 +3,7 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
     box-sizing: border-box;
-}
-
-.lt-container-dark {
-    border-color: white !important;
+    background-color: white;
 }
 
 .lt-container-gray {
@@ -35,11 +32,6 @@
     border-collapse: collapse;
     padding: 0 1.5vmax;
     border-top: none;
-}
-
-.lt-header-dark {
-    background-color: rgb(247, 148, 30) !important;
-    color: black !important;
 }
 
 .lt-header-gray {
@@ -73,11 +65,6 @@
     font-size: 2.3vh;
 }
 
-.lt-qty-input-dark {
-    background-color: black;
-    color: white;
-}
-
 .lt-val {
     height: 5vh;
     font-size: 2.3vh;
@@ -88,12 +75,6 @@
     border: .05vmax solid black;
     border-collapse: collapse;
     padding: .5vh 1.5vmax;
-}
-
-.lt-val-dark {
-    color: white !important;
-    background-color: black !important;
-    border-color: white !important;
 }
 
 .lt-val-gray {
@@ -149,12 +130,6 @@
     color: white;
 }
 
-.lt-add-button-dark {
-    background-color: rgb(247, 148, 30);
-    border-color: white;
-    color: black;
-}
-
 .lt-remove-button {
     cursor: pointer;
     width: 5vw;
@@ -170,9 +145,4 @@
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
     color: white;
-}
-
-.lt-remove-button-dark {
-    background-color: rgb(247, 148, 30);
-    color: black;
 }

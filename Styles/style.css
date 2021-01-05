@@ -19,21 +19,10 @@ body {
     overflow: hidden;
 }
 
-.body-dark {
-    background-color: black;
-}
-
 .noselect {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
-.selectableText {
-    -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;

@@ -7,10 +7,6 @@
     border: 3px solid black;
 }
 
-.proj-list-dark {
-    border-color: white;
-}
-
 .proj-value {
     display: block;
     width: 100%;
@@ -22,12 +18,6 @@
     line-height: 5vh;
     background-color: rgb(27, 117, 188);
     color: white;
-}
-
-.proj-value-dark {
-    color: black;
-    background-color: rgb(247, 148, 30);
-    border-color: white;
 }
 
 .proj-add {
@@ -43,12 +33,6 @@
     line-height: 2vh;
     background-color: rgb(27, 117, 188);
     color: white;
-}
-
-.proj-add-dark {
-    color: black;
-    background-color: rgb(247, 148, 30);
-    border-color: white;
 }
 
 .proj-icon {
@@ -69,11 +53,6 @@
     background-color: rgb(27, 117, 188);
     color: white;
     float: left;
-}
-
-.proj-input-dark {
-    background-color: rgb(247, 148, 30);
-    color: black;
 }
 
 .proj-droppable {
