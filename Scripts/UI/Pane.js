@@ -1,8 +1,7 @@
 class Pane {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}, _d = {}) {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d = {}) {
         this.top = _top;
         this.parent = _parent;
-        this.id = _id;
         this.classes = _classes;
         this.updateValue = _updateValue;
 

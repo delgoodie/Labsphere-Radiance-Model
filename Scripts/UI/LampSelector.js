@@ -1,6 +1,6 @@
 class LampSelector extends Pane {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}, _d) {
-        super(_top, _parent, _id, _classes, _updateValue, {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d) {
+        super(_top, _parent, _classes, _updateValue, {
             width: '22vw',
             height: '40vh',
             top: '45vh',
@@ -30,6 +30,7 @@ class LampSelector extends Pane {
         this.power = new Input(this.top, this.element, { container: 'ls-power-container', field: 'ls-power-field', value: 'ls-power-input' }, 'Power', Parameter.RIGHT, () => this.update(), { value: '' });
     }
     onClose() {}
+
     onSelect() {
         if (this.selectedLamp != '') {
             this.updateValue(this.selectedLamp);

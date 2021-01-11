@@ -93,7 +93,7 @@ class Model {
 
         this.output = new Output(this.top, this.element, 2834, { container: 'model-output-container' }, () => this.update());
 
-        this.customLoad = new CustomLoader(this.top, this.element, 22, (model, specs) => {
+        this.customLoad = new CustomLoader(this.top, this.element, (model, specs) => {
             if ('x' in model && specs) {
                 this.type = 'Measured Model';
                 this.fixedTrace = model;
@@ -207,7 +207,7 @@ class Model {
         rows[8].push(Calculator.Math.Lux(this.model, this.units));
         for (let i = 1; i <= this.model.lamps.length; i++) rows[i].push(this.model.lamps[i - 1]);
 
-        IO.downloadCSV(rows.map(e => e.join(',')).join('\n'), this.name.val);
+        IO.DownloadCSV(rows.map(e => e.join(',')).join('\n'), this.name.val);
     }
 
     update() {
@@ -234,7 +234,7 @@ class Model {
         this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
         this.lampTable.update(this.portCount.val);
         this.requirements.update(model, trace, this.units);
-        this.graph.update([trace].concat(this.requirements.traces).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type);
+        this.graph.update([trace].concat(this.requirements.traces.map(t => Calculator.Trace.Interpolate(t))).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type);
         this.output.update(model, this.units);
         this.visual.update(model, this.units);
     }

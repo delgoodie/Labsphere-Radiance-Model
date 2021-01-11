@@ -1,6 +1,6 @@
 class CustomLoader extends Pane {
-    constructor(_top, _parent, _id = -1, _updateValue = () => {}, _d) {
-        super(_top, _parent, _id, { title: 'cl-title' }, _updateValue, {
+    constructor(_top, _parent, _updateValue = () => {}, _d) {
+        super(_top, _parent, { title: 'cl-title' }, _updateValue, {
             width: '30vw',
             height: '50vh',
             left: '35vw',
@@ -30,7 +30,7 @@ class CustomLoader extends Pane {
         $(this.upload).attr('accept', '.xlsx, .xls');
 
         $(this.upload).on('change', function(e) {
-            IO.parseExcel(e.target.files[0]).then((data) => {
+            IO.ParseExcel(e.target.files[0]).then((data) => {
                 if (data.length < 2) return;
                 data[0].shift();
                 let name = data[1].shift();

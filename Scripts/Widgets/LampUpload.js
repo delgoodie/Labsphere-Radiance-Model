@@ -1,52 +1,46 @@
-class LampUpload {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}) {
-        this.top = _top;
-        this.parent = _parent;
-        this.id = _id;
-        this.classes = _classes;
+class LampUpload extends Pane {
+    constructor(_top, _parent, _updateValue = () => {}) {
+        super(_top, _parent, {}, _updateValue, {
+            width: '30vw',
+            height: '82vh',
+            top: '10vh',
+            left: '35vw',
+            draggable: false,
+            title: 'Lamp Upload',
+            disableDefaultOnCreate: false,
+            disableDefaultOnClose: false,
+            disableDefaultOnSelect: false,
+        });
         this.flux = [];
-        this.updateValue = _updateValue;
+    }
+    onCreate(_d) {
+        this.name = new Input(this.top, this.element, { container: 'lu-param-wide' }, 'Name', Parameter.DOWN, () => {});
 
-        this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
-        $(this.parent).append(this.element);
-        $(this.element).attr('id', this.id);
-        $(this.element).addClass('lu-container');
+        this.type = new Dropdown(this.top, this.element, { container: 'lu-param-wide' }, 'Type', Parameter.DOWN, () => {}, { content: ['HIS', 'HES', 'Xenon', 'Plasma', 'Other'] })
 
-        this.name = new Input(this.top, this.element, 238, { container: 'lu-param-wide' }, 'Name', Parameter.DOWN, () => {});
+        this.portDiameter = new Input(this.top, this.element, { container: 'lu-param-short' }, 'Port Diameter (in)', Parameter.DOWN, () => {});
 
-        this.portDiameter = new Input(this.top, this.element, 6486, { container: 'lu-param-short' }, 'Port Diameter (in)', Parameter.DOWN, () => {});
+        this.vaa = new Toggle(this.top, this.element, { container: 'lu-param-short' }, 'VAA', Parameter.DOWN, () => {}, { content: ['true', 'false'] });
 
-        this.type = new Dropdown(this.top, this.element, 6486, { container: 'lu-param-short' }, 'Type', Parameter.DOWN, () => {}, { content: [{ text: 'HIS', value: 'HIS' }, { text: 'HES', value: 'HES' }, { text: 'Xenon', value: 'Xenon' }, { text: 'Plasma', value: 'Plasma' }, { text: 'Other', value: 'Other' }] })
+        this.power = new Input(this.top, this.element, { container: 'lu-param-short' }, 'Power (W)', Parameter.DOWN, () => {});
 
-        this.vaa = new Toggle(this.top, this.element, 6486, { container: 'lu-param-short' }, 'VAA', Parameter.DOWN, () => {}, { content: [{ text: 'true', value: true }, { text: 'false', value: false }] });
+        this.voltage = new Input(this.top, this.element, { container: 'lu-param-short' }, 'Voltage (V)', Parameter.DOWN, () => {});
 
-        this.power = new Input(this.top, this.element, 353, { container: 'lu-param-short' }, 'Power (W)', Parameter.DOWN, () => {});
+        this.description = new Input(this.top, this.element, { container: 'lu-param-wide' }, 'Description', Parameter.DOWN, () => {});
 
-        this.description = new Input(this.top, this.element, 238, { container: 'lu-param-wide' }, 'Description', Parameter.DOWN, () => {});
-
-
-        this.upload = new Upload(this.top, this.element, 238, { container: 'lu-param-wide' }, 'Upload Flux (.xlsx, .xls) (W/nm)', Parameter.DOWN, () => {}, {
+        this.upload = new Upload(this.top, this.element, { container: 'lu-param-wide' }, 'Upload Flux (.xlsx, .xls) (W/nm)', Parameter.DOWN, () => {}, {
             accept: '.xlsx, .xls',
             change: (e) => {
-                IO.parseExcel(e.target.files[0]).then((data) => {
+                IO.ParseExcel(e.target.files[0]).then((data) => {
                     if (data.length < 1) return;
                     this.flux = data[0];
                 });
             }
         });
-        $(this.uploadButton).on('click', function() {
-            this.addLamp();
-        }.bind(this));
+    }
 
-        this.uploadButton = document.createElement('div');
-        $(this.uploadButton).addClass('lu-button');
-        $(this.uploadButton).text('Upload');
-        $(this.element).append(this.uploadButton);
-
-        $(this.uploadButton).on('click', function() { this.addLamp() }.bind(this));
-
-        if ('container' in this.classes) $(this.element).addClass(this.classes.container);
+    onSelect() {
+        this.updateValue({ name: this.name.val, portDiameter: this.portDiameter.val, vaa: this.vaa.val, type: this.type.val, power: this.power.val, voltage: this.voltage.val, flux: this.flux });
     }
 
     addLamp() {

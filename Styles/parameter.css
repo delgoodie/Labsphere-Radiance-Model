@@ -47,6 +47,12 @@
     background-color: lightgray;
     color: black;
     white-space: nowrap;
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
 }
 
 .param-input {
@@ -102,6 +108,20 @@
     text-align: center;
     cursor: default;
     line-height: 210%;
+    color: black;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.param-upload {
+    height: 50%;
+    width: 100%;
+    display: block;
+    background-color: white;
+    font-size: 2.3vh;
+    text-align: center;
+    cursor: default;
+    line-height: 4vh;
     color: black;
     white-space: nowrap;
     cursor: pointer;

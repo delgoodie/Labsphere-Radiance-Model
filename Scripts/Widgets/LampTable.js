@@ -16,7 +16,7 @@ class LampTable {
         $(this.element).attr('id', this.id);
         $(this.element).addClass('lt-container');
 
-        this.lampSelector = new LampSelector(this.top, _parent, 43, {}, (l) => {
+        this.lampSelector = new LampSelector(this.top, _parent, {}, (l) => {
             this.lamps[this.selectedPort] = l;
             this.updateValue();
         }, {});
@@ -33,6 +33,7 @@ class LampTable {
     }
 
     update(d) {
+        this.lampSelector.update();
         if (typeof(d) == 'object') {
             this.lamps = d.lamps;
             this.qty = d.qty;

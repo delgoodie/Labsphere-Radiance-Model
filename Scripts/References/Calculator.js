@@ -271,10 +271,10 @@ var Calculator = {
         SpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
-            let model;
-            let reset = () => model = {
-                name: '',
-                lamps: [],
+
+            let model = {
+                name: startModel.name,
+                lamps: [...new Array(startModel.portCount)].map(_ => 'HIS-010'),
                 portDiameter: startModel.portDiameter,
                 sphereDiameter: startModel.sphereDiameter,
                 material: startModel.material,
@@ -282,48 +282,77 @@ var Calculator = {
                 qty: [...new Array(startModel.portCount)].map(_ => 1),
                 onQty: [...new Array(startModel.portCount)].map(_ => 1),
             };
-            reset();
 
-            let iteration = 0;
-            let index = 0;
-            let target = Calculator.Trace.Sum(lt, ut);
-            target.y = target.y.map(y => y / 2);
+            let wF = Calculator.Model.WallFraction(model, units) * 1;
+            let PISA = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM));
+            let lFlux = lt.y.map((r, i) => {
+                let ref = Calculator.Model.Reflectance(lt.x[i], model, units);
+                return r / ref * PISA * (1 - ref * wF);
+            });
+            let uFlux = ut.y.map((r, i) => {
+                let ref = Calculator.Model.Reflectance(ut.x[i], model, units);
+                return r / ref * PISA * (1 - ref * wF);
+            });
 
-            let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
-            let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
-            for (;;) {
-                iteration++;
-                if (iteration > 10) {
-                    if (target != ut && target != lt) target = lt;
-                    else if (target == lt) target = ut;
-                    else if (target == ut) {
-                        console.log('failed');
-                        return model;
-                    }
-                    reset();
-                    iteration = 0;
-                }
-                if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
-                else {
-                    let bestLamp, minError;
-                    let offset = Calculator.Trace.Difference(target, Calculator.Trace.Model(model));
-                    let targetFlux = offset.y.map((r, i) => r / Calculator.Model.Reflectance(offset.x[i], model, units) * (Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM)) * (1 - Calculator.Model.Reflectance(offset.x[i], model, units) * Calculator.Model.WallFraction(model, units))));
-                    Object.getOwnPropertyNames(LampData).forEach((name, i) => {
-                        let error = Calculator.Trace.Error({ x: target.x, y: targetFlux, units: target.units }, { x: target.x, y: FluxData[name], units: target.units });
-                        if (bestLamp !== undefined) {
-                            if (error < minError) {
-                                minError = error;
-                                bestLamp = name;
-                            }
-                        } else {
-                            bestLamp = name;
-                            minError = error;
+
+            let avg = lFlux.map((l, i) => (l + uFlux[i]) / 2);
+
+            let lampNames = Object.getOwnPropertyNames(LampData);
+            let wA = lt.x[0];
+            let wB = lt.x[lt.x.length - 1];
+
+            console.log('start model passed', Calculator.Lamp.SumBetween(startModel.lamps, wA, wB).every((f, i) => f >= lFlux[i] && f <= uFlux[i]));
+
+            function rank(iF) {
+                let ret = lampNames.slice();
+                let sums = ret.map(n => Calculator.Lamp.FluxBetween(n, wA, wB).map((f, i) => f + iF[i]));
+                let errors = sums.map(s => Math.sqrt(s.map((f, i) => (avg[i] - f) * (avg[i] - f)).reduce((sum, f) => sum + f, 0)));
+                let sorted = false;
+                while (!sorted) {
+                    sorted = true;
+                    for (let i = 1; i < ret.length; i++) {
+                        if (sums[i].some((f, i) => f > uFlux[i])) {
+                            ret.splice(i, 1);
+                            errors.splice(i, 1);
+                            sorted = false;
+                            break;
+                        } else if (errors[i] < errors[i - 1]) {
+                            let temp = [ret[i], errors[i]];
+                            errors[i] = errors[i - 1];
+                            ret[i] = ret[i - 1];
+                            ret[i - 1] = temp[0];
+                            errors[i - 1] = temp[1];
+                            sorted = false;
                         }
-                    });
-                    model.lamps[index] = bestLamp;
-                    index = (index + 1) % model.portCount;
+                    }
                 }
+                return ret.filter((_, i) => i < 5);
             }
+
+            function rec(lamps) {
+                let iF = Calculator.Lamp.SumBetween(lamps, wA, wB);
+                if (iF.every((f, i) => f >= lFlux[i] && f <= uFlux[i])) {
+                    console.log('success', lamps);
+                    return lamps;
+                } else if (lamps.length == model.portCount) {
+                    console.log('end condition', lamps);
+                    return false;
+                }
+
+                let rankedLamps = rank(iF);
+                for (let i = 0; i < rankedLamps.length; i++) {
+                    let ret = rec([rankedLamps[i], ...lamps]);
+                    if (ret) return ret;
+                }
+                console.log('end of local func')
+                return false;
+            }
+
+            model.lamps = rec([]) || [];
+            console.log('lamps: ', model.lamps);
+            while (model.lamps.length < model.portCount) model.lamps.push('Empty');
+            return model;
+
         },
 
         InbandReverse() {},
@@ -453,21 +482,17 @@ var Calculator = {
         },
 
         Between(ut, lt, trace) {
-            // let passed = true;
-            // for (let i = 0; i < lt.x.length; i++)
-            //     if (trace.x.indexOf(lt.x[i]) != -1 && trace.y[trace.x.indexOf(lt.x[i])] < Calculator.Units.Convert(lt.y[i], lt.units.radiance, trace.units.radiance)) passed = false;
-            // for (let i = 0; i < ut.x.length; i++)
-            //     if (trace.x.indexOf(ut.x[i]) != -1 && trace.y[trace.x.indexOf(ut.x[i])] > Calculator.Units.Convert(ut.y[i], ut.units.radiance, trace.units.radiance)) passed = false;
-            // return passed;
             return Calculator.Trace.Compare(lt, trace, (y1, y2) => y1 < y2, true) && Calculator.Trace.Compare(ut, trace, (y1, y2) => y1 > y2, true);
         },
 
         Sum(t1, t2) {
-            return { x: t1.x.filter(w => t2.x.includes(w)), y: t1.x.filter(w => t2.x.includes(w)).map(w => t1.y[t1.x.indexOf(w)] + t2.y[t2.x.indexOf(w)]) };
+            let x = t1.x.filter(w => t2.x.includes(w));
+            return { x: x, y: x.map(w => t1.y[t1.x.indexOf(w)] + t2.y[t2.x.indexOf(w)]) };
         },
 
         Difference(t1, t2) {
-            return { x: t1.x.filter(w => t2.x.includes(w)), y: t1.x.filter(w => t2.x.includes(w)).map(w => t1.y[t1.x.indexOf(w)] - t2.y[t2.x.indexOf(w)]) };
+            let x = t1.x.filter(w => t2.x.includes(w));
+            return { x: x, y: x.map(w => t1.y[t1.x.indexOf(w)] - t2.y[t2.x.indexOf(w)]) };
         },
 
         Error(t1, t2) {
@@ -541,5 +566,111 @@ var Calculator = {
                 color: 'color' in trace ? trace.color : 'black',
             }
         },
+
+        Copy(trace) {
+            return {
+                x: trace.x.slice(),
+                y: trace.y.slice(),
+                name: trace.name,
+                color: trace.color,
+                units: trace.units
+            }
+        }
+    },
+
+    Lamp: {
+        Flux(name) {
+            if (name in FluxData) return FluxData[name];
+            else return Calculator.Lamp.Flux('HIS-010').map(_ => 0);
+        },
+
+        FluxBetween(name, wA, wB) {
+            let scale = wA >= 250 ? 1 : 1000;
+            let shift = wA >= 250 ? 250 : .25;
+            if (name in FluxData) return FluxData[name].slice(Math.round((wA - shift) * scale), Math.round((wB - shift) * scale));
+            else return Calculator.Lamp.FluxBetween('HIS-010', wA, wB).map(_ => 0);
+        },
+
+        FluxAt(name, w) {
+            return FluxData[name][Math.round((w - (w >= 250 ? 250 : .25)) * (w >= 250 ? 1 : 1000))];
+        },
+
+        Sum(lamps) {
+            return lamps.reduce((acc, l) => acc.map((a, i) => a + Calculator.Lamp.Flux(l)[i]), Calculator.Lamp.Flux('-'));
+        },
+
+        SumBetween(lamps, wA, wB) {
+            return lamps.reduce((acc, l) => {
+                let fB = Calculator.Lamp.FluxBetween(l, wA, wB);
+                return acc.map((a, i) => a + fB[i]);
+            }, Calculator.Lamp.FluxBetween('-', wA, wB));
+        }
     }
 };
+
+/*
+ lt = Calculator.Trace.Interpolate(lt);
+            ut = Calculator.Trace.Interpolate(ut);
+            let model;
+            let reset = () => model = {
+                name: '',
+                lamps: [],
+                portDiameter: startModel.portDiameter,
+                sphereDiameter: startModel.sphereDiameter,
+                material: startModel.material,
+                portCount: startModel.portCount,
+                qty: [...new Array(startModel.portCount)].map(_ => 1),
+                onQty: [...new Array(startModel.portCount)].map(_ => 1),
+            };
+            reset();
+
+            let iteration = 0;
+            let index = 0;
+            let avg = Calculator.Trace.Sum(lt, ut);
+            avg.y = target.y.map(y => y / 2);
+            let target = Calculator.Trace.Copy(avg);
+
+            let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
+            let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
+            for (;;) {
+                //CHECK FLOW CONDITIONS
+                iteration++;
+                if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
+                if (iteration > 10) {
+                    if (target == avg) target = lt;
+                    else if (target == lt) target = ut;
+                    else if (target == ut) {
+                        console.error('Spectral Reverse Failed');
+                        return model;
+                    }
+                    reset();
+                    iteration = 0;
+                }
+
+                //TARGET FLUX
+                let offset = Calculator.Trace.Difference(target, Calculator.Trace.Model(model));
+                let PISA = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM));
+                let targetFlux = offset.y.map((r, i) => {
+                    let ref = Calculator.Model.Reflectance(offset.x[i], model, units);
+                    return r / ref * PISA * (1 - ref * Calculator.Model.WallFraction(model, units));
+                });
+
+                //FIND MINIMIZING LAMP
+                let bestLamp, minError;
+                Object.getOwnPropertyNames(LampData).forEach((name, i) => {
+                    let error = Calculator.Trace.Error({ x: target.x, y: targetFlux, units: target.units }, { x: target.x, y: FluxData[name], units: target.units });
+                    if (bestLamp !== undefined) {
+                        if (error < minError) {
+                            minError = error;
+                            bestLamp = name;
+                        }
+                    } else {
+                        bestLamp = name;
+                        minError = error;
+                    }
+                });
+
+                model.lamps[index] = bestLamp;
+                index = (index + 1) % model.portCount;
+            }
+*/

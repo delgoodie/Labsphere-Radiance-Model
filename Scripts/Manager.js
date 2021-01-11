@@ -7,22 +7,10 @@ class Manager {
         this.activeTab = -1;
         this.projects = {};
         this.wiping = false;
+        this.customLamps = {};
 
-        this.head = CreateElement('div', this.element, 'manager-header');
-
-        this.body = CreateElement('div', this.element, 'manager-body');
-
-        let logo = document.createElement('div');
-        $(logo).on('click', function() { window.location.reload(); });
-        $(logo).addClass('manager-logo');
-        let img = document.createElement('img');
-        $(img).attr('src', 'Resources/Images/logo.jpg');
-        $(img).addClass('manager-logo-image');
-        $(logo).append(img);
-        let span = document.createElement('span');
-        $(logo).append(span);
-        $(span).text('Web Radiance App');
-        $(this.head).append(logo);
+        this.head = $('.manager-head');
+        this.body = $('.manager-body');
 
         this.projectHeader = CreateElement('div', this.head, 'manager-proj-title');
         $(this.projectHeader).on('click', function() { $(this.projectFolder.element).slideDown(slideSpeed); }.bind(this));
@@ -40,7 +28,14 @@ class Manager {
 
         this.darkMode = new Button(this, settings, 'moon manager-settings-button', Button.TOGGLE, s => this.toggleDarkMode(s), { state: false, tooltip: ['Light Mode', 'Dark Mode'] });
 
-        this.addLamp = new Button(this, settings, 'lightbulb manager-settings-button', Button.ACTION, () => {}, { tooltip: 'Add Custom Lamp' });
+        this.lampUpload = new LampUpload(this, document.body, l => {
+            let lampData = { "portDiameter": l.portDiameter, "vaa": l.vaa, "type": l.type, "power": l.power, "voltage": l.voltage };
+            LampData[l.name] = lampData;
+            FluxData[l.name] = l.flux;
+            this.customLamps[l.name] = { lampData: lampData, fluxData: l.flux };
+            this.updateAll();
+        });
+        this.addLamp = new Button(this, settings, 'lightbulb manager-settings-button', Button.ACTION, () => $(this.lampUpload.element).slideDown(slideSpeed), { tooltip: 'Add Custom Lamp' });
 
         this.docs = new Button(this, settings, 'question manager-settings-button', Button.ACTION, () => window.open('docs.html'), { tooltip: 'Docs' });
 
@@ -55,7 +50,7 @@ class Manager {
 
         let foundStorage = this.retriveLocalStorage();
 
-        this.projectFolder = new ProjectFolder(this, this.element, 432, {}, (action, data, data2) => {
+        this.projectFolder = new ProjectFolder(this, this.element, {}, (action, data, data2) => {
             if (action == 'open') this.openProject(data);
             else if (action == 'create') this.openProject(this.createProject());
             else if (action == 'upload') {
@@ -72,7 +67,9 @@ class Manager {
 
 
         if (foundStorage) this.openProject(localStorage.getItem('current'));
-        //$(this.projectFolder.element).slideDown(slideSpeed);
+        else $(this.projectFolder.element).slideDown(slideSpeed);
+
+        window.setTimeout(() => $('.splashscreen').slideUp(500), 500);
     }
 
     get globalTraces() {
@@ -175,17 +172,16 @@ class Manager {
         let settingsObj = JSON.parse(localStorage.getItem('settings'));
         if (!settingsObj) {
             this.darkMode.val = false;
-            //this.customLamps = {};
+            this.customLamps = {};
             return;
         }
         this.darkMode.val = settingsObj.darkMode;
-        //this.customLamps.val = settingsObj.customLamps;
-        /*
+        this.customLamps = settingsObj.customLamps;
         Object.getOwnPropertyNames(settingsObj.customLamps).forEach(n => {
             LampData[n] = settingsObj.customLamps[n].lampData;
             FluxData[n] = settingsObj.customLamps[n].fluxData;
         });
-        */
+
         this.projects = {};
         let foundStorage = false;
         for (let i = 0; i < localStorage.length; i++) {
@@ -242,7 +238,7 @@ class Manager {
         let settingsObj = {
             activeProject: this.current,
             darkMode: this.darkMode.val,
-            //customLamps: this.customLamps.val,
+            customLamps: this.customLamps,
         }
         localStorage.setItem('settings', JSON.stringify(settingsObj));
     }
@@ -252,22 +248,4 @@ class Manager {
         //this.customLamps[name].lampData = LampData[name];
         //this.customLamps[name].fluxData = FluxData[name];
     }
-}
-
-var manager;
-var slideSpeed = 300;
-$(window).on('load', function() { manager = new Manager(); });
-
-window.onbeforeunload = function(e) {
-    if (manager.wiping) return;
-    manager.saveAll();
-    //return ''; //causes 'Are you sure you want to leave?'
-}
-
-function CreateElement(_type, _parent, _class, _text) {
-    let ret = document.createElement(_type);
-    if (_class) $(ret).addClass(_class);
-    if (_text) $(ret).text(_text);
-    if (_parent) $(_parent).append(ret);
-    return ret;
 }

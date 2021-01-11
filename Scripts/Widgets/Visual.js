@@ -31,7 +31,7 @@ class Visual {
         this.canvas.width = width;
         this.canvas.height = height;
 
-        $(this.sphere).attr('src', 'Resources/Visual/sphere-' + mdl.sphereDiameter + '.png'); //(this.top.darkMode.val) ? 'Resources/Visual/sphere-dark.jpg' : 'Resources/Visual/sphere.jpg');
+        $(this.sphere).attr('src', 'Resources/Images/sphere-' + mdl.sphereDiameter + '.png');
 
         let radius = 0;
         let scale = height * 0.04560252836;
@@ -53,7 +53,12 @@ class Visual {
 
         this.c.fillStyle = 'black';
         this.c.beginPath();
-        this.c.arc(width / 2, height / 2, radius + 3, 0, Math.PI * 2);
+        this.c.arc(width / 2, height / 2, radius * 1.12, 0, Math.PI * 2);
+        this.c.fill();
+
+        this.c.fillStyle = 'grey';
+        this.c.beginPath();
+        this.c.arc(width / 2, height / 2, radius * 1.07, 0, Math.PI * 2);
         this.c.fill();
 
         this.c.fillStyle = CCT2Color[(Math.round(Calculator.Math.CCT(mdl, units) / 100) * 100) + ''];

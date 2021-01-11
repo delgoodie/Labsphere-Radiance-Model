@@ -193,13 +193,13 @@ class Upload extends Parameter {
         this.value = document.createElement('input');
         $(this.value).attr('type', 'file');
         $(this.value).attr('accept', d.accept);
-        $(this.value).addClass('param-toggle');
+        $(this.value).addClass('param-upload');
         $(this.element).append(this.value);
         $(this.value).on('change', d.change);
     }
 
     set val(x) {
-        console.error('can\'t set value of Upload Parameter');
+        console.error('Can\'t set value of Upload Parameter');
     }
 
     get val() {

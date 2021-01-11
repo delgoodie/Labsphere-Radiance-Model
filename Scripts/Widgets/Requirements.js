@@ -80,7 +80,7 @@ class Requirements {
         let spectralTitle = CreateElement('div', spectralContainer, 'req-tab-title', 'Spectral Table');
         let spectralDelete = CreateElement('i', spectralTitle, 'fas fa-minus-circle req-tab-delete');
 
-        this.upload = new Pane(this.top, _d.tabElement, 422, {}, (lS, uS) => {
+        this.upload = new Pane(this.top, _d.tabElement, {}, (lS, uS) => {
             this.lowerSpectral = lS;
             this.upperTolerance = uS;
             this.updateValue();
@@ -105,7 +105,7 @@ class Requirements {
                 $(self.element).append(self.upload);
 
                 $(self.upload).on('change', function(e) {
-                    IO.parseExcel(e.target.files[0]).then(data => {
+                    IO.ParseExcel(e.target.files[0]).then(data => {
                         if (data.length < 2) return;
                         data[0].shift();
                         let lSname = data[1].shift();

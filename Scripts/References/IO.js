@@ -1,5 +1,5 @@
 class IO {
-    static async parseExcel(file) { //e.dataTransfer.files[0]   e.target.files[0]
+    static async ParseExcel(file) { //e.dataTransfer.files[0]   e.target.files[0]
         let promise = new Promise((res, rej) => {
             let fileReader = new FileReader();
             fileReader.readAsBinaryString(file);
@@ -24,7 +24,7 @@ class IO {
         return promise;
     }
 
-    static async parseJSON(file) { //e.dataTransfer.files[0]   e.target.files[0]
+    static async ParseJSON(file) { //e.dataTransfer.files[0]   e.target.files[0]
         let promise = new Promise((res, rej) => {
             let fileReader = new FileReader();
             fileReader.onload = function(e) { res(JSON.parse(e.target.result)); }
@@ -33,7 +33,7 @@ class IO {
         return promise;
     }
 
-    static downloadJSON(obj, name) {
+    static DownloadJSON(obj, name) {
         let dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(obj));
         let a = document.createElement('a');
         a.setAttribute('href', dataStr);
@@ -43,7 +43,7 @@ class IO {
         a.remove();
     }
 
-    static downloadCSV(content, name) {
+    static DownloadCSV(content, name) {
         let a = document.createElement('a');
         a.setAttribute('download', name + '.csv');
         $(a).attr('href', URL.createObjectURL(new Blob([content], { type: 'text/csv' })));

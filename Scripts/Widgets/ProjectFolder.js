@@ -1,6 +1,6 @@
 class ProjectFolder extends Pane {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}, _d) {
-        super(_top, _parent, _id, _classes, _updateValue, {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d) {
+        super(_top, _parent, _classes, _updateValue, {
             width: '30vw',
             height: '50vh',
             top: '25vh',
@@ -38,7 +38,7 @@ class ProjectFolder extends Pane {
 
         this.projectList.addEventListener('drop', function(e) {
             e.preventDefault();
-            IO.parseJSON(e.dataTransfer.files[0]).then(data => this.updateValue('upload', data));
+            IO.ParseJSON(e.dataTransfer.files[0]).then(data => this.updateValue('upload', data));
         }.bind(this));
 
         let add = document.createElement('div');
@@ -72,7 +72,7 @@ class ProjectFolder extends Pane {
             $(document.body).append(input);
             $(input).on('change', function(e) {
                 e.preventDefault();
-                IO.parseJSON(e.target.files[0]).then(data => this.updateValue('upload', data));
+                IO.ParseJSON(e.target.files[0]).then(data => this.updateValue('upload', data));
                 $(input).remove();
             }.bind(this));
 
@@ -97,7 +97,7 @@ class ProjectFolder extends Pane {
 
             new Button(this.top, p, 'times proj-icon', Button.ACTION, () => this.updateValue('delete', proj), {});
 
-            new Button(this.top, p, 'file-download proj-icon', Button.ACTION, () => IO.downloadJSON(projects[proj], projects[proj].name), {});
+            new Button(this.top, p, 'file-download proj-icon', Button.ACTION, () => IO.DownloadJSON(projects[proj], projects[proj].name), {});
 
             $(p).on('click', function() {
                 this.updateValue('open', proj);

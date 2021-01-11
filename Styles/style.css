@@ -64,3 +64,19 @@ body {
     color: black !important;
     background-color: rgb(247, 148, 30) !important;
 }
+
+.splashscreen {
+    color: white;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    padding: 20% 0;
+    text-align: center;
+    font-size: 10vh;
+    z-index: 100;
+    background-color: rgb(27, 117, 188);
+    font-weight: 700;
+    text-shadow: black 4px 4px 3px;
+}
