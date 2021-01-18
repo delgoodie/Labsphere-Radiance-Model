@@ -59,7 +59,7 @@ class ProjectFolder extends Pane {
         }.bind(this));
 
         let upload = document.createElement('div');
-        $(upload).addClass('proj-add');
+        $(upload).addClass('proj-upload');
         $(upload).text('Upload Project');
         $(this.element).append(upload);
 

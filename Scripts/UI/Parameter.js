@@ -117,7 +117,14 @@ class Dropdown extends Parameter {
 
         $(this.dropdown).on('click', function() {
             if ($(this.dropcontent).is(':visible')) $(this.dropcontent).slideUp(100);
-            else $(this.dropcontent).slideDown(100);
+            else {
+                if ($(this.dropcontent).children().length > 0)
+                    $(this.dropcontent).slideDown(100);
+                else {
+                    $(this.value).css('color', 'red');
+                    $(this.value).animate({ color: 'black' }, 500);
+                }
+            }
         }.bind(this));
 
         this.update(d.content);
@@ -132,6 +139,7 @@ class Dropdown extends Parameter {
     }
 
     update(content) {
+        $(this.dropcontent).hide();
         $(this.dropcontent).empty();
         content.forEach(e => {
             let div = document.createElement('div');

@@ -82,7 +82,7 @@ class Requirements {
 
         this.upload = new Pane(this.top, _d.tabElement, {}, (lS, uS) => {
             this.lowerSpectral = lS;
-            this.upperTolerance = uS;
+            this.upperSpectral = uS;
             this.updateValue();
         }, {
             width: '25vw',
@@ -118,6 +118,9 @@ class Requirements {
             },
             onSelect(self) {
                 self.updateValue(self.lowerSpectral, self.upperSpectral);
+                self.lowerSpectral = Calculator.Trace.Empty();
+                self.upperSpectral = Calculator.Trace.Empty();
+                self.upload.value = '';
             }
         });
 
@@ -212,7 +215,7 @@ class Requirements {
     }
 
     get traces() {
-        return [this.lowerSpectral, this.upperSpectral, ...this.bands];
+        return [Calculator.Trace.Interpolate(this.lowerSpectral), Calculator.Trace.Interpolate(this.upperSpectral), ...this.bands];
     }
 
     load(d) {
@@ -252,9 +255,9 @@ class Requirements {
 
         this.irradianceP.val = Calculator.Math.Round(Calculator.Math.Irradiance(this.irradianceWA.val, this.irradianceWB.val, this.irradianceD.val, mdl, units), 2);
 
-        this.lowerSpectral.color = Calculator.Trace.Compare(this.lowerSpectral, trace, (y1, y2) => y1 < y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.lowerSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.lowerSpectral), trace, (y1, y2) => y1 < y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
-        this.upperSpectral.color = Calculator.Trace.Compare(this.upperSpectral, trace, (y1, y2) => y1 > y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.upperSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.upperSpectral), trace, (y1, y2) => y1 > y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
         this.bands.forEach((b, i) => b.color = this.inbandTable.values['Predicted'][i] >= this.inbandTable.values['Required'][i] ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)');
 

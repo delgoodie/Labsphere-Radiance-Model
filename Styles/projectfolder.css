@@ -4,14 +4,14 @@
     height: 60%;
     margin: 15% 15%;
     margin-bottom: 0;
-    border: 3px solid black;
+    border: .4vh solid black;
 }
 
 .proj-value {
     display: block;
     width: 100%;
     height: 15%;
-    border-bottom: 3px solid black;
+    border-bottom: .4vh solid black;
     border-collapse: collapse;
     padding: 0;
     font-size: 2.3vh;
@@ -21,18 +21,32 @@
 }
 
 .proj-add {
-    margin-left: 14%;
+    margin-left: 15%;
     margin-top: 2%;
     padding: 3%;
     text-align: center;
-    display: inline-block;
     border-radius: 5vmin;
-    border: 3px solid black;
+    border: .4vh solid black;
     border-collapse: collapse;
     font-size: 2vh;
     line-height: 2vh;
     background-color: rgb(27, 117, 188);
     color: white;
+    float: left;
+}
+
+.proj-upload {
+    margin-right: 13%;
+    margin-top: 2%;
+    padding: 3%;
+    text-align: center;
+    border-radius: 5vmin;
+    border: .4vh solid black;
+    font-size: 2vh;
+    line-height: 2vh;
+    background-color: rgb(27, 117, 188);
+    color: white;
+    float: right;
 }
 
 .proj-icon {

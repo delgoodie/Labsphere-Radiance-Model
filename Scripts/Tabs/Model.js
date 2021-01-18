@@ -234,7 +234,7 @@ class Model {
         this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
         this.lampTable.update(this.portCount.val);
         this.requirements.update(model, trace, this.units);
-        this.graph.update([trace].concat(this.requirements.traces.map(t => Calculator.Trace.Interpolate(t))).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type);
+        this.graph.update([trace].concat(this.requirements.traces).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type); //.map(t => Calculator.Trace.Interpolate(t))
         this.output.update(model, this.units);
         this.visual.update(model, this.units);
     }

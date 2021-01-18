@@ -1,5 +1,6 @@
 var manager;
 var slideSpeed = 300;
+// localStorage.clear();
 $(window).on('load', function() { manager = new Manager(); });
 
 window.onbeforeunload = function(e) {

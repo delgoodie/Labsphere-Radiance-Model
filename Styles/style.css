@@ -80,3 +80,8 @@ body {
     font-weight: 700;
     text-shadow: black 4px 4px 3px;
 }
+
+.ui-button-tooltip {
+    padding: .5vh;
+    border: .2vh solid black !important;
+}

@@ -27,7 +27,7 @@
     font-size: 2.7vh;
     font-weight: 500;
     background-color: rgb(27, 117, 188);
-    color: white !important;
+    color: white;
     border: .05vmax solid black;
     border-collapse: collapse;
     padding: 0 1.5vmax;

@@ -357,6 +357,7 @@ var Calculator = {
 
         InbandReverse() {},
 
+
         IndexToPort(i) {
             switch (i) {
                 case 0:
@@ -500,9 +501,11 @@ var Calculator = {
         },
 
         Interpolate(t) { //DOESNT WORK FOR µm
-            t.x = t.x.map(x => Math.round(x));
+            let ret = {};
+            ret.x = t.x.map(x => Math.round(x));
+            ret.y = t.y.slice();
             let temp = { x: [], y: [] };
-            t.x.forEach((_, i) => {
+            ret.x.forEach((_, i) => {
                 if (i != t.x.length - 1) {
                     let y = x => (t.y[i + 1] - t.y[i]) / (t.x[i + 1] - t.x[i]) * (x - t.x[i]) + t.y[i];
                     for (let j = t.x[i]; j < t.x[i + 1]; j++) {
@@ -511,9 +514,12 @@ var Calculator = {
                     }
                 }
             });
-            t.x = t.x.concat(temp.x);
-            t.y = t.y.concat(temp.y);
-            return Calculator.Trace.Sort(t);
+            ret.x = ret.x.concat(temp.x);
+            ret.y = ret.y.concat(temp.y);
+            ret.name = t.name;
+            ret.color = t.color;
+            ret.units = t.units;
+            return Calculator.Trace.Sort(ret);
         },
 
         Sort(t) {

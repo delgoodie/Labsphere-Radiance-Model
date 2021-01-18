@@ -17,7 +17,11 @@ class Button {
         if ('tooltip' in _d) {
             this.tooltip = _d.tooltip;
             $(this.element).attr('title', this.getToolTip());
-            $(this.element).tooltip();
+            $(this.element).tooltip({
+                classes: {
+                    'ui-tooltip': 'ui-button-tooltip'
+                }
+            });
         }
 
 

@@ -19,6 +19,8 @@ class Manager {
 
         let settings = CreateElement('div', this.head, 'manager-settings-container');
 
+        this.tools = new Button(this, settings, 'tools manager-settings-button', Button.ACTION, () => {}, { tooltip: 'tools' });
+
         this.wipe = new Button(this, settings, 'trash manager-settings-button', Button.ACTION, () => {
             if (!confirm('Wipe all projects?')) return;
             localStorage.clear();
@@ -35,6 +37,7 @@ class Manager {
             this.customLamps[l.name] = { lampData: lampData, fluxData: l.flux };
             this.updateAll();
         });
+
         this.addLamp = new Button(this, settings, 'lightbulb manager-settings-button', Button.ACTION, () => $(this.lampUpload.element).slideDown(slideSpeed), { tooltip: 'Add Custom Lamp' });
 
         this.docs = new Button(this, settings, 'question manager-settings-button', Button.ACTION, () => window.open('docs.html'), { tooltip: 'Docs' });
