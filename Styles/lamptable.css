@@ -35,7 +35,7 @@
 }
 
 .lt-header-gray {
-    background-color: rgba(48, 48, 48, 0.3) !important;
+    background-color: rgba(48, 48, 48, 0.7) !important;
 }
 
 .lt-row {
@@ -78,12 +78,12 @@
 }
 
 .lt-val-gray {
-    background-color: rgba(48, 48, 48, 0.308) !important;
+    background-color: rgba(48, 48, 48, 0.6) !important;
 }
 
 .lt-lamp {
     padding: .75% !important;
-    width: 1vw !important;
+    width: 100%;
     cursor: pointer;
     color: black;
     border: .05vmax solid black;
@@ -117,32 +117,25 @@
 .lt-add-button {
     cursor: pointer;
     width: 5vw;
-    height: 5vh;
-    background-color: grey;
     text-align: center;
-    font-size: 2.3vh;
+    font-size: 3vh;
     background-color: rgb(27, 117, 188);
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    border-width: 1px;
-    border-left: hidden;
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
     color: white;
+    line-height: 5vh;
+    float: left;
 }
 
 .lt-remove-button {
     cursor: pointer;
     width: 5vw;
-    height: 5vh;
-    background-color: grey;
-    float: right;
     text-align: center;
-    font-size: 2.3vh;
+    font-size: 3vh;
     background-color: lightcoral;
-    font-family: Impact, 'Haettenschweiler', 'Arial Narrow Bold', sans-serif;
-    border-width: 1px;
-    border-left: hidden;
     border-bottom-right-radius: 15px;
     border-bottom-left-radius: 15px;
     color: white;
+    line-height: 5vh;
+    float: right;
 }

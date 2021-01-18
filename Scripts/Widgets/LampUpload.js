@@ -42,26 +42,4 @@ class LampUpload extends Pane {
     onSelect() {
         this.updateValue({ name: this.name.val, portDiameter: this.portDiameter.val, vaa: this.vaa.val, type: this.type.val, power: this.power.val, voltage: this.voltage.val, flux: this.flux });
     }
-
-    addLamp() {
-        if (this.flux.length == 0) return;
-        LampData[this.name.val] = { "portDiameter": this.portDiameter.val * 1, "vaa": this.vaa.val == 'true', "type": this.type.val, "power": this.power.val, "voltage": 0, "description": this.description.val };
-        FluxData[this.name.val] = this.flux;
-        this.top.settings.addCustomLamp(this.name.val);
-        alert('Successfully loaded ' + this.name.val);
-
-        this.name.val = '';
-        this.portDiameter.val = '';
-        this.type.val = '';
-        this.vaa.val = 'false';
-        this.power.val = '';
-        this.description.val = '';
-        this.updateValue();
-    }
-
-    update() {}
-
-    toggleDarkMode(s) {
-        $(this.uploadButton).toggleClass('dark3', s);
-    }
 }

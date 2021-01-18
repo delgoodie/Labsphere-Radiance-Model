@@ -113,6 +113,7 @@ class ProjectFolder extends Pane {
         $(this.projectList).toggleClass('dark1', s);
         $(this.droppable).toggleClass('proj-droppable-dark', s);
         $('.proj-add').toggleClass('dark3', s);
+        $('.proj-upload').toggleClass('dark3', s);
         $('.proj-value').toggleClass('dark3', s);
         $('.proj-input').toggleClass('dark3', s);
         $('.proj-icon').toggleClass('dark3', s);

@@ -20,15 +20,20 @@ class Table {
         $(this.table).addClass('table-table');
         $(this.element).append(this.table);
 
-        this.addButton = document.createElement('button');
-        $(this.addButton).addClass('table-add-button');
-        $(this.addButton).text('+');
-        $(this.element).append(this.addButton);
+        this.addButton = CreateElement('div', this.element, 'fas fa-plus lt-add-button');
         $(this.addButton).on('click', function() {
             this.add();
             this.assembleTable();
             this.updateValue(this.values);
         }.bind(this));
+
+        this.removeButton = CreateElement('div', this.element, 'fas fa-minus lt-remove-button');
+        $(this.removeButton).on('click', function() {
+            this.remove();
+            this.assembleTable();
+            this.updateValue(this.values);
+        }.bind(this));
+
         this.assembleTable();
 
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
@@ -38,6 +43,12 @@ class Table {
         if (this.customAdd) this.customAdd(this);
         else
             for (let v in this.values) this.values[v].push(0);
+    }
+
+    remove() {
+        if (this.customRemove) this.customRemove(this);
+        else
+            for (let v in this.values) this.values[v].pop();
     }
 
     update(values, pos) {
@@ -108,6 +119,7 @@ class Table {
     }
 
     toggleDarkMode(s) {
-        $(this.addButton).toggleClass('dark1', s);
+        $(this.addButton).toggleClass('dark3', s);
+        $(this.removeButton).css('color', s ? 'black' : 'white');
     }
 }

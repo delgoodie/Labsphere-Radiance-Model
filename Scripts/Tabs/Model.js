@@ -14,8 +14,6 @@ class Model {
         $(this.element).addClass('model-container');
         $(this.parent).append(this.element);
 
-        //DOCUMENT FLOW
-
         //#region SPECS
         this.specs = document.createElement('div');
         $(this.specs).addClass('model-specs');
@@ -47,7 +45,7 @@ class Model {
 
         this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => {}, { value: 0 });
 
-        this.portCount = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Port Count', Parameter.DOWN, () => {
+        this.portCount = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Port Count', Parameter.DOWN, v => {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
             this.update();
         }, { value: 2 });
@@ -211,6 +209,9 @@ class Model {
     }
 
     update() {
+        this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
+        this.lampTable.update(this.portCount.val);
+
         let trace = this.trace;
         let model = this.model;
         this.units = this.graph.units.get;
@@ -231,8 +232,6 @@ class Model {
         if (tp > 500) $(this.totalPower.text).addClass('model-param-flag');
         else $(this.totalPower.text).removeClass('model-param-flag');
 
-        this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
-        this.lampTable.update(this.portCount.val);
         this.requirements.update(model, trace, this.units);
         this.graph.update([trace].concat(this.requirements.traces).concat(this.top.globalTraces.filter(t => t.id != trace.id)), this.units, this.type); //.map(t => Calculator.Trace.Interpolate(t))
         this.output.update(model, this.units);

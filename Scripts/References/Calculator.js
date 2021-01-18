@@ -473,7 +473,7 @@ var Calculator = {
             let passed = every;
             for (let i = 0; i < t1.x.length; i++)
                 if (t2.x.indexOf(t1.x[i]) != -1)
-                    if (tF(t2.y[t2.x.indexOf(t1.x[i])], Calculator.Units.Convert(t1.y[i], t1.units.radiance, t2.units.radiance))) passed = every ? false : passed;
+                    if (tF(t2.y[t2.x.indexOf(Calculator.Units.Convert(t1.x[i], t1.units.wavelength, t2.units.wavelength))], Calculator.Units.Convert(t1.y[i], t1.units.radiance, t2.units.radiance))) passed = every ? false : passed;
                     else passed = every ? passed : true;
             return passed;
         },

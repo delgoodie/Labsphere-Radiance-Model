@@ -33,7 +33,21 @@ class Requirements {
             else this.inbandPos = null;
             this.bands = this.tableToBands(values);
             this.updateValue();
-        }, {});
+        }, {
+            add(self) {
+                if (self.values['Wavelength A'].length == 0) {
+                    self.values['Wavelength A'].push(250);
+                    self.values['Wavelength B'].push(500);
+                    self.values['Required'].push(0);
+                    self.values['Predicted'].push(0);
+                } else {
+                    self.values['Wavelength A'].push(self.values['Wavelength B'][self.values['Wavelength B'].length - 1]);
+                    self.values['Wavelength B'].push(2 * self.values['Wavelength B'][self.values['Wavelength B'].length - 1] - self.values['Wavelength A'][self.values['Wavelength B'].length - 1]);
+                    self.values['Required'].push(self.values['Required'][self.values['Required'].length - 1]);
+                    self.values['Predicted'].push(0);
+                }
+            }
+        });
 
         if ('bands' in _d) {
             let wA = [];
