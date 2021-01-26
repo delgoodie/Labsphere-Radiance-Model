@@ -472,9 +472,12 @@ var Calculator = {
         Compare(t1, t2, tF = (y1, y2) => y1 == y2, every = true) {
             let passed = every;
             for (let i = 0; i < t1.x.length; i++)
-                if (t2.x.indexOf(t1.x[i]) != -1)
-                    if (tF(t2.y[t2.x.indexOf(Calculator.Units.Convert(t1.x[i], t1.units.wavelength, t2.units.wavelength))], Calculator.Units.Convert(t1.y[i], t1.units.radiance, t2.units.radiance))) passed = every ? false : passed;
-                    else passed = every ? passed : true;
+                if (t2.x.indexOf(Calculator.Units.Convert(t1.x[i], t1.units.wavelength, t2.units.wavelength)) != -1) {
+                    let y1 = Calculator.Units.Convert(t1.y[i], t1.units.radiance, t2.units.radiance);
+                    let y2 = t2.y[t2.x.indexOf(Calculator.Units.Convert(t1.x[i], t1.units.wavelength, t2.units.wavelength))];
+                    if (tF(y1, y2)) passed = every ? passed : true;
+                    else passed = every ? false : passed;
+                }
             return passed;
         },
 
@@ -500,41 +503,39 @@ var Calculator = {
             return Math.sqrt(Calculator.Trace.Difference(t1, t2).y.map(y => y * y).reduce((sum, y) => sum + y, 0));
         },
 
-        Interpolate(t) { //DOESNT WORK FOR µm
+        Interpolate(t) {
             let ret = {};
-            ret.x = t.x.map(x => Math.round(x));
+            ret.x = t.x.slice();
             ret.y = t.y.slice();
-            let temp = { x: [], y: [] };
-            ret.x.forEach((_, i) => {
-                if (i != t.x.length - 1) {
-                    let y = x => (t.y[i + 1] - t.y[i]) / (t.x[i + 1] - t.x[i]) * (x - t.x[i]) + t.y[i];
-                    for (let j = t.x[i]; j < t.x[i + 1]; j++) {
-                        temp.x.push(j);
-                        temp.y.push(y(j));
-                    }
-                }
-            });
-            ret.x = ret.x.concat(temp.x);
-            ret.y = ret.y.concat(temp.y);
             ret.name = t.name;
             ret.color = t.color;
             ret.units = t.units;
+            ret.x.forEach((_, i) => {
+                if (i != t.x.length - 1) {
+                    let y = x => (t.y[i + 1] - t.y[i]) / (t.x[i + 1] - t.x[i]) * (x - t.x[i]) + t.y[i];
+                    for (let j = t.x[i]; j < t.x[i + 1]; j += t.units.wavelength == Length.NM ? 1 : .001) {
+                        ret.x.push(j);
+                        ret.y.push(y(j));
+                    }
+                }
+            });
             return Calculator.Trace.Sort(ret);
         },
 
         Sort(t) {
             let sorted = false;
+            let temp = 0;
             while (!sorted) {
                 sorted = true;
                 for (let i = 1; i < t.x.length; i++) {
                     if (t.x[i - 1] * 1 > t.x[i] * 1) {
-                        let tempX = t.x[i];
+                        temp = t.x[i];
                         t.x[i] = t.x[i - 1];
-                        t.x[i - 1] = tempX;
+                        t.x[i - 1] = temp;
 
-                        let tempY = t.y[i];
+                        temp = t.y[i];
                         t.y[i] = t.y[i - 1];
-                        t.y[i - 1] = tempY;
+                        t.y[i - 1] = temp;
                         sorted = false;
                     }
                 }
@@ -613,6 +614,7 @@ var Calculator = {
         }
     }
 };
+
 
 /*
  lt = Calculator.Trace.Interpolate(lt);

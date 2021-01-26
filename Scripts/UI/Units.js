@@ -14,8 +14,7 @@ class Units {
         $(this.parent).append(this.element);
 
         let unitHeader = document.createElement('div');
-        $(unitHeader).addClass('unit-header');
-        $(unitHeader).text('Units');
+        $(unitHeader).addClass('unit-header fas fa-ruler');
         $(this.element).append(unitHeader);
 
         this.powerUnit = new Toggle(this.top, this.element, { container: 'unit-param-container', value: 'unit-toggle', field: 'unit-field', darkContainer: 'dark1' }, '', Parameter.RIGHT, () => this.updateValue(this.get), { content: ['W', 'mW'], value: 'W' });
@@ -58,6 +57,6 @@ class Units {
 
     toggleDarkMode(s) {
         $('.unit-operator').toggleClass('dark1', s);
-        $('.unit-header').toggleClass('dark3', s);
+        $('.unit-header').toggleClass('dark4', s);
     }
 }

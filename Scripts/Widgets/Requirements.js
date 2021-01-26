@@ -36,8 +36,8 @@ class Requirements {
         }, {
             add(self) {
                 if (self.values['Wavelength A'].length == 0) {
-                    self.values['Wavelength A'].push(250);
-                    self.values['Wavelength B'].push(500);
+                    self.values['Wavelength A'].push(true ? 250 : .25); //needs fixing
+                    self.values['Wavelength B'].push(true ? 500 : .5);
                     self.values['Required'].push(0);
                     self.values['Predicted'].push(0);
                 } else {
@@ -269,9 +269,9 @@ class Requirements {
 
         this.irradianceP.val = Calculator.Math.Round(Calculator.Math.Irradiance(this.irradianceWA.val, this.irradianceWB.val, this.irradianceD.val, mdl, units), 2);
 
-        this.lowerSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.lowerSpectral), trace, (y1, y2) => y1 < y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.lowerSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.lowerSpectral), trace, (y1, y2) => y1 <= y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
-        this.upperSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.upperSpectral), trace, (y1, y2) => y1 > y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
+        this.upperSpectral.color = Calculator.Trace.Compare(Calculator.Trace.Interpolate(this.upperSpectral), trace, (y1, y2) => y1 >= y2, true) ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)';
 
         this.bands.forEach((b, i) => b.color = this.inbandTable.values['Predicted'][i] >= this.inbandTable.values['Required'][i] ? 'rgba(0, 175, 0, 1)' : 'rgba(255, 0, 0, 1)');
 

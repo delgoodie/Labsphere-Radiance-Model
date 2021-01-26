@@ -114,6 +114,10 @@
     color: black !important;
 }
 
+.lt-status-toggle {
+    font-size: 5vh;
+}
+
 .lt-add-button {
     cursor: pointer;
     width: 5vw;

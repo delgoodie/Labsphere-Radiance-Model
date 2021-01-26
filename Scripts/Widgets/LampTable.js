@@ -138,9 +138,10 @@ class LampTable {
                 $(td[1]).text(this.lamps[i]);
                 $(td[1]).addClass('lt-lamp');
 
-                $(td[2]).text(this.onQty[i] == 1 ? 'ON' : 'OFF');
                 $(td[2]).addClass('lt-status');
                 $(td[2]).toggleClass('lt-status-off', !this.onQty[i] == 1);
+
+                CreateElement('i', td[2], 'lt-status-toggle ' + (this.onQty[i] == 1 ? 'fas fa-toggle-on' : 'fas fa-toggle-off'));
 
                 if (this.editable) {
                     $(td[1]).on('click', function() {
@@ -148,7 +149,7 @@ class LampTable {
                         this.selectedPort = i;
                     }.bind(this));
                     $(td[2]).on('click', function() {
-                        this.onQty[i] = ($(td[2]).text() == 'ON' ? 0 : 1);
+                        this.onQty[i] = ($(td[2]).hasClass('lt-status-off') ? 1 : 0);
                         this.updateValue();
                     }.bind(this));
                 }
@@ -158,8 +159,8 @@ class LampTable {
             $(td[3]).text(Lamp.getLamp(this.lamps[i]).power + 'W');
             $(td[3]).addClass('lt-derived');
 
-            $(td[4]).text(Lamp.getLamp(this.lamps[i]).vaa ? 'YES' : 'NO');
             $(td[4]).addClass('lt-derived');
+            CreateElement('i', td[4], 'lt-status-toggle ' + (Lamp.getLamp(this.lamps[i]).vaa ? 'fas fa-check' : 'fas fa-times'));
 
             td.forEach(e => tr.append(e));
             $(this.table).append(tr);

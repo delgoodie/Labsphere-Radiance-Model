@@ -22,6 +22,9 @@ class Graph {
         this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
         this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'), { tooltip: 'Calculate Reverse Model' });
         this.load = new Button(this.top, this.element, 'dot-circle graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
+        // this.colorPicker = CreateElement('input', this.element, 'graph-button graph-color');
+        // $(this.colorPicker).attr('type', 'color');
+        // $(this.colorPicker).val('#1B75BC');
 
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }

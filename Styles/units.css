@@ -26,13 +26,13 @@
 
 .unit-header {
     display: block;
-    width: 30%;
+    width: 20%;
     height: 100%;
     float: left;
     background-color: rgb(27, 117, 188);
-    color: white;
+    color: black;
     text-align: center;
-    font-size: 2.5vh;
+    font-size: 3vh;
     line-height: 4vh;
     border: 1px solid black;
     border-collapse: collapse;

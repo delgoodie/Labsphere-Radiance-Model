@@ -217,6 +217,7 @@ class Manager {
         $(this.element).toggleClass('dark1', s);
         $(this.projectHeader).toggleClass('dark2', s);
         this.createTabList();
+        $('#feedback-link').toggleClass('feedback-dark', s);
     }
 
     updateAll() {
