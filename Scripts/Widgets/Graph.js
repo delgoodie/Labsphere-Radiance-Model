@@ -1,8 +1,7 @@
 class Graph {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}, _d = {}) {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d = {}) {
         this.top = _top;
         this.parent = _parent;
-        this.id = _id;
         this.classes = _classes;
         this.updateValue = _updateValue;
 
@@ -22,9 +21,11 @@ class Graph {
         this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
         this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'), { tooltip: 'Calculate Reverse Model' });
         this.load = new Button(this.top, this.element, 'dot-circle graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
-        // this.colorPicker = CreateElement('input', this.element, 'graph-button graph-color');
-        // $(this.colorPicker).attr('type', 'color');
-        // $(this.colorPicker).val('#1B75BC');
+        this.colorPicker = CreateElement('input', this.element, 'graph-button graph-color');
+        $(this.colorPicker).attr('type', 'color');
+        $(this.colorPicker).val(_d.color ? _d.color : (this.top.darkMode.val ? '#f7941e' : '#1b75bc'));
+
+        $(this.colorPicker).on('change', function() { this.updateValue('color', $(this.colorPicker).val()); }.bind(this));
 
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }
@@ -76,5 +77,6 @@ class Graph {
 
     toggleDarkMode(s) {
         $(this.element).toggleClass('dark1', s);
+        if ($(this.colorPicker).val() == '#f7941e' || $(this.colorPicker).val() == '#1b75bc') $(this.colorPicker).val(s ? '#f7941e' : '#1b75bc');
     }
 }

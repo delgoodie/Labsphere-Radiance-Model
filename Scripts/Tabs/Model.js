@@ -6,6 +6,7 @@ class Model {
         this.classes = _classes;
         this.units = _d && 'units' in _d ? _d.units : Calculator.Units.Default;
         this.fixedTrace = Calculator.Trace.Empty();
+        this.traceColor = _d ? _d.traceColor : (this.top.darkMode.val ? '#f7941e' : '#1b75bc');
         this.element = document.createElement('div');
 
         $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
@@ -53,7 +54,7 @@ class Model {
         $(this.element).append(this.specs);
         //#endregion
 
-        this.graph = new Graph(this.top, this.element, 200, { container: 'model-graph-container' },
+        this.graph = new Graph(this.top, this.element, { container: 'model-graph-container' },
             (action, value) => {
                 switch (action) {
                     case 'units':
@@ -72,10 +73,14 @@ class Model {
                     case 'model':
                         $(this.customLoad.element).slideDown(slideSpeed);
                         break;
+                    case 'color':
+                        this.traceColor = value;
+                        this.update();
+                        break;
                     default:
                         console.error('invalid graph action');
                 }
-            }, { units: this.units });
+            }, { units: this.units, color: this.traceColor });
 
         this.requirements = new Requirements(this.top, this.element, 20022, { container: 'model-requirements' }, (d) => {
             this.update();
@@ -161,12 +166,12 @@ class Model {
         if (this.type != 'Measured Model' && this.type != 'Excel Model') {
             let modelTrace = Calculator.Trace.Model(this.model, this.units);
             modelTrace.id = this.id;
-            modelTrace.color = this.top.darkMode.val ? 'rgba(247, 148, 30, 1)' : 'rgba(27, 117, 188, 1)';
+            modelTrace.color = this.traceColor; // this.top.darkMode.val ? 'rgba(247, 148, 30, 1)' : 'rgba(27, 117, 188, 1)';
             return modelTrace;
         } else {
             let fixedTrace = Calculator.Trace.Convert(this.fixedTrace, this.units);
             fixedTrace.id = this.id;
-            fixedTrace.color = this.top.darkMode.val ? 'rgba(247, 148, 30, 1)' : 'rgba(27, 117, 188, 1)';
+            fixedTrace.color = this.traceColor; //this.top.darkMode.val ? 'rgba(247, 148, 30, 1)' : 'rgba(27, 117, 188, 1)';
             return fixedTrace;
         }
     }
@@ -248,6 +253,7 @@ class Model {
             requirements: this.requirements.save(),
             units: this.units,
             fixedTrace: this.fixedTrace,
+            traceColor: this.traceColor,
         }
     }
 

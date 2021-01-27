@@ -77,7 +77,7 @@ class Manager {
 
     get globalTraces() {
         let traces = this.tab.filter(t => t.global).map(t => t.trace);
-        traces.forEach(t => t.color = t.color.substring(0, t.color.length - 3) + ', .5)');
+        traces.forEach(t => t.color += '80');
         return traces;
     }
 
