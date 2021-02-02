@@ -216,7 +216,7 @@ var Calculator = {
         WallFraction(mdl, units) {
             let exitArea = Math.PI * Math.pow(Calculator.Units.Convert(mdl.portDiameter, units.length, Length.CM) / 2, 2);
             let sArea = Calculator.Model.SphereArea(Calculator.Units.Convert(mdl.sphereDiameter, units.length, Length.CM));
-            let inputPortDiameter = Math.sqrt(mdl.lamps.reduce((sum, l, i) => sum += Math.pow(Lamp.getLamp(l).portDiameter * mdl.qty[i], 2), 0));
+            let inputPortDiameter = Math.sqrt(mdl.lamps.reduce((sum, l, i) => sum += Math.pow(Calculator.Lamp.Specs(l).portDiameter * mdl.qty[i], 2), 0));
             let inputPortArea = Math.PI * Math.pow((inputPortDiameter * 2.54) / 2, 2);
             return (sArea - exitArea - inputPortArea) / sArea; //fixed
         },
@@ -244,7 +244,7 @@ var Calculator = {
         SpectralRadiance(w, mdl, units) { //inches
             let i = Math.round((w - (units.wavelength == Length.NM ? 250 : .25)) * (units.wavelength == Length.NM ? 1 : 1000));
             let ref = Calculator.Model.Reflectance(w, mdl, units);
-            let lampSum = mdl.lamps.reduce((sum, l, index) => sum += Lamp.getLamp(l).flux(i) * mdl.onQty[index], 0);
+            let lampSum = mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0);
 
             let wFraction = Calculator.Model.WallFraction(mdl, units);
 
@@ -268,7 +268,142 @@ var Calculator = {
             return sum * increment;
         },
 
+
         SpectralReverse(startModel, lt, ut, units) {
+            lt = Calculator.Trace.Interpolate(lt);
+            ut = Calculator.Trace.Interpolate(ut);
+            let model;
+            let reset = () => model = {
+                name: startModel.name,
+                lamps: [],
+                portDiameter: startModel.portDiameter,
+                sphereDiameter: startModel.sphereDiameter,
+                material: startModel.material,
+                portCount: startModel.portCount,
+                qty: [...new Array(startModel.portCount)].map(_ => 1),
+                onQty: [...new Array(startModel.portCount)].map(_ => 1),
+            };
+            reset();
+
+
+            let iteration = 0;
+            let index = 0;
+            let avg = Calculator.Trace.Sum(lt, ut);
+            avg.y = avg.y.map(y => y / 2);
+
+            let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
+            let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
+
+            let wl = [];
+            let checkWl = lmps => wl.some(l => lmps.every(lmp => l.some(lm => lm == lmp)));
+            for (;;) {
+                iteration++;
+                if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
+                else wl.push(model.lamps.slice());
+                if (iteration > 60) {
+                    console.log(wl);
+                    console.error('Spectral Reverse Failed');
+                    return model;
+                }
+
+                //TARGET FLUX
+                let offset = Calculator.Trace.Difference(avg, Calculator.Trace.Model(model));
+                let PISA = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM));
+                let targetFlux = offset.y.map((r, i) => {
+                    let ref = Calculator.Model.Reflectance(offset.x[i], model, units);
+                    return r / ref * PISA * (1 - ref * Calculator.Model.WallFraction(model, units));
+                });
+
+                //FIND MINIMIZING LAMP
+                let bestLamp, minError;
+                Object.getOwnPropertyNames(LampData).forEach((name, i) => {
+                    if (checkWl(model.lamps.filter((v, i) => i != index).concat([name]))) return;
+                    let error = Calculator.Trace.Error({ x: avg.x, y: targetFlux, units: avg.units }, { x: avg.x, y: FluxData[name], units: avg.units });
+                    if (bestLamp !== undefined) {
+                        if (error < minError) {
+                            minError = error;
+                            bestLamp = name;
+                        }
+                    } else {
+                        bestLamp = name;
+                        minError = error;
+                    }
+                });
+
+                model.lamps[index] = bestLamp;
+                index = (index + 1) % model.portCount;
+            }
+        },
+
+        uSpectralReverse(startModel, lt, ut, units) {
+            lt = Calculator.Trace.Interpolate(lt);
+            ut = Calculator.Trace.Interpolate(ut);
+            let model;
+            let reset = () => model = {
+                name: '',
+                lamps: [],
+                portDiameter: startModel.portDiameter,
+                sphereDiameter: startModel.sphereDiameter,
+                material: startModel.material,
+                portCount: startModel.portCount,
+                qty: [...new Array(startModel.portCount)].map(_ => 1),
+                onQty: [...new Array(startModel.portCount)].map(_ => 1),
+            };
+            reset();
+
+
+            let iteration = 0;
+            let index = 0;
+            let avg = Calculator.Trace.Sum(lt, ut);
+            avg.y = avg.y.map(y => y / 2);
+            let target = avg; //Calculator.Trace.Copy(avg);
+
+            let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
+            let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
+            for (;;) {
+                //CHECK FLOW CONDITIONS
+                iteration++;
+                if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
+                if (iteration > 50) {
+                    if (target == avg) target = lt;
+                    else if (target == lt) target = ut;
+                    else if (target == ut) {
+                        console.error('Spectral Reverse Failed');
+                        return model;
+                    }
+                    reset();
+                    iteration = 0;
+                }
+
+                //TARGET FLUX
+                let offset = Calculator.Trace.Difference(target, Calculator.Trace.Model(model));
+                let PISA = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(model.sphereDiameter, units.length, Length.CM));
+                let targetFlux = offset.y.map((r, i) => {
+                    let ref = Calculator.Model.Reflectance(offset.x[i], model, units);
+                    return r / ref * PISA * (1 - ref * Calculator.Model.WallFraction(model, units));
+                });
+
+                //FIND MINIMIZING LAMP
+                let bestLamp, minError;
+                Object.getOwnPropertyNames(LampData).forEach((name, i) => {
+                    let error = Calculator.Trace.Error({ x: target.x, y: targetFlux, units: target.units }, { x: target.x, y: FluxData[name], units: target.units });
+                    if (bestLamp !== undefined) {
+                        if (error < minError) {
+                            minError = error;
+                            bestLamp = name;
+                        }
+                    } else {
+                        bestLamp = name;
+                        minError = error;
+                    }
+                });
+
+                model.lamps[index] = bestLamp;
+                index = (index + 1) % model.portCount;
+            }
+        },
+
+        mSpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
 
@@ -395,6 +530,8 @@ var Calculator = {
                     return 3;
                 case 20:
                     return 4;
+                case 30:
+                    return 6;
                 case 40:
                     return 25;
                 case 65:
@@ -448,7 +585,7 @@ var Calculator = {
         },
 
         Lumens(mdl, units) {
-            return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Lamp.getLamp(l).flux(i) * mdl.onQty[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
+            return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
         },
 
         FootLamberts(mdl, units) {
@@ -486,7 +623,7 @@ var Calculator = {
         },
 
         Between(ut, lt, trace) {
-            return Calculator.Trace.Compare(lt, trace, (y1, y2) => y1 < y2, true) && Calculator.Trace.Compare(ut, trace, (y1, y2) => y1 > y2, true);
+            return Calculator.Trace.Compare(lt, trace, (y1, y2) => y1 <= y2, true) && Calculator.Trace.Compare(ut, trace, (y1, y2) => y1 >= y2, true);
         },
 
         Sum(t1, t2) {
@@ -552,7 +689,7 @@ var Calculator = {
                 name: mdl.name,
                 x: wav,
                 y: wav.map((_, i) => {
-                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Lamp.getLamp(l).flux(i) * mdl.onQty[index], 0) /* + blackbody flux */ )) / (piSA * (1 - ref[i] * wF));
+                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0) /* + blackbody flux */ )) / (piSA * (1 - ref[i] * wF));
                     return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
                 }),
                 units: units,
@@ -598,8 +735,21 @@ var Calculator = {
             else return Calculator.Lamp.FluxBetween('HIS-010', wA, wB).map(_ => 0);
         },
 
-        FluxAt(name, w) {
+        FluxAtWavelength(name, w) {
+            if (name == 'Empty') return 0;
+            if (name.substring(0, 11) == 'Custom Lamp') {
+                let lmpIndex = name.substring(12, 13);
+                return 0;
+            }
             return FluxData[name][Math.round((w - (w >= 250 ? 250 : .25)) * (w >= 250 ? 1 : 1000))];
+        },
+        FluxAtIndex(name, i) {
+            if (name == 'Empty') return 0;
+            if (name.substring(0, 11) == 'Custom Lamp') {
+                let lmpIndex = name.substring(12, 13);
+                return 0;
+            }
+            return FluxData[name][i];
         },
 
         Sum(lamps) {
@@ -611,6 +761,11 @@ var Calculator = {
                 let fB = Calculator.Lamp.FluxBetween(l, wA, wB);
                 return acc.map((a, i) => a + fB[i]);
             }, Calculator.Lamp.FluxBetween('-', wA, wB));
+        },
+
+        Specs(name) {
+            if (name in LampData) return LampData[name];
+            else return null;
         }
     }
 };

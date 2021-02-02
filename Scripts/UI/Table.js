@@ -1,5 +1,8 @@
 class Table {
-    constructor(_top, _parent, _id = -1, _classes = {}, _headers = [''], _type = ParamType.DERIVED, _updateValue = () => {}, d = {}) {
+    static get DERIVED() { return 0; }
+    static get INPUT() { return 1; }
+    static get CUSTOM() { return 2; }
+    constructor(_top, _parent, _id = -1, _classes = {}, _headers = [''], _type = Table.DERIVED, _updateValue = () => {}, d = {}) {
         this.top = _top;
         this.parent = _parent;
         this.id = _id;
@@ -88,11 +91,11 @@ class Table {
                 if (this.top.darkMode.val) $(val).addClass('dark1');
                 $(tr).append(val);
 
-                if (this.type == TableType.DERIVED) {
+                if (this.type == Table.DERIVED) {
                     $(val).addClass('table-derived');
                     if (this.values[h].length > i) $(val).text(this.values[h][i]);
                     else $(val).text('empty');
-                } else if (this.type == TableType.INPUT) {
+                } else if (this.type == Table.INPUT) {
                     let input = document.createElement('input');
                     $(input).attr('type', 'text');
                     $(input).addClass('table-input');
@@ -130,7 +133,7 @@ class Table {
 
 
 class mTable {
-    constructor(_top, _parent, _id = -1, _classes = {}, _headers = [''], _type = ParamType.DERIVED, _updateValue = () => {}, d = {}) {
+    constructor(_top, _parent, _id = -1, _classes = {}, _headers = [''], _type = Table.DERIVED, _updateValue = () => {}, d = {}) {
         this.top = _top;
         this.parent = _parent;
         this.id = _id;
@@ -219,11 +222,11 @@ class mTable {
                 if (this.top.darkMode.val) $(val).addClass('dark1');
                 $(tr).append(val);
 
-                if (this.type == TableType.DERIVED) {
+                if (this.type == Table.DERIVED) {
                     $(val).addClass('table-derived');
                     if (this.values[h].length > i) $(val).text(this.values[h][i]);
                     else $(val).text('empty');
-                } else if (this.type == TableType.INPUT) {
+                } else if (this.type == Table.INPUT) {
                     let input = document.createElement('input');
                     $(input).attr('type', 'text');
                     $(input).addClass('table-input');

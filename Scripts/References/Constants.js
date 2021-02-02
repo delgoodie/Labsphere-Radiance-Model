@@ -1,9 +1,5 @@
 const sigFigs = 10;
 
-const ModelType = { CALC: 0, FIXED: 1 };
-
-const TableType = { DERIVED: 0, INPUT: 1 };
-
 const Radiance = {
     W_CM: 32,
     MW_CM: 24,

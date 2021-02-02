@@ -28,7 +28,7 @@ class Requirements {
         let inbandTitle = CreateElement('div', inbandContainer, 'req-tab-title', 'In-Band Table');
         let inbandDelete = CreateElement('i', inbandTitle, 'fas fa-minus-circle req-tab-delete');
 
-        this.inbandTable = new Table(this.top, inbandContainer, 432, { container: 'req-table-container', header: 'req-table-header', value: 'req-table-value' }, ['Wavelength A', 'Wavelength B', 'Required', 'Predicted'], TableType.INPUT, (values, pos) => {
+        this.inbandTable = new Table(this.top, inbandContainer, 432, { container: 'req-table-container', header: 'req-table-header', value: 'req-table-value' }, ['Wavelength A', 'Wavelength B', 'Required', 'Predicted'], Table.INPUT, (values, pos) => {
             if (pos) this.inbandPos = pos;
             else this.inbandPos = null;
             this.bands = this.tableToBands(values);
@@ -140,7 +140,7 @@ class Requirements {
 
         let spectralUpload = CreateElement('i', spectralTitle, 'fas fa-file-upload req-tab-upload')
 
-        this.spectralTable = new Table(this.top, spectralContainer, 43, { container: 'req-table-container', header: 'req-table-header', value: 'req-table-value' }, ['Wavelength', 'Lower Tolerance', 'Upper Tolerance'], TableType.INPUT, (values, pos) => {
+        this.spectralTable = new Table(this.top, spectralContainer, 43, { container: 'req-table-container', header: 'req-table-header', value: 'req-table-value' }, ['Wavelength', 'Lower Tolerance', 'Upper Tolerance'], Table.INPUT, (values, pos) => {
             this.lowerSpectral.x = values['Wavelength'].map(w => Calculator.Units.Convert(w, this.units.wavelength, this.lowerSpectral.units.wavelength));
             this.lowerSpectral.y = values['Lower Tolerance'].map(r => Calculator.Units.Convert(r, this.units.radiance, this.lowerSpectral.units.radiance));
 
@@ -157,7 +157,7 @@ class Requirements {
                     self.values['Lower Tolerance'].push(0);
                     self.values['Upper Tolerance'].push(0);
                 } else if (self.values['Wavelength'].length == 1) {
-                    self.values['Wavelength'].push(self.values['Wavelength'][0] + 1);
+                    self.values['Wavelength'].push(self.values['Wavelength'][0] + 10);
                     self.values['Lower Tolerance'].push(self.values['Lower Tolerance'][0]);
                     self.values['Upper Tolerance'].push(self.values['Upper Tolerance'][0]);
                 } else {

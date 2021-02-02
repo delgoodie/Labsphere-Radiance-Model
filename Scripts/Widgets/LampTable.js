@@ -156,11 +156,11 @@ class LampTable {
             }
 
 
-            $(td[3]).text(Lamp.getLamp(this.lamps[i]).power + 'W');
+            $(td[3]).text(Calculator.Lamp.Specs(this.lamps[i]).power + 'W');
             $(td[3]).addClass('lt-derived');
 
             $(td[4]).addClass('lt-derived');
-            CreateElement('i', td[4], 'lt-status-toggle ' + (Lamp.getLamp(this.lamps[i]).vaa ? 'fas fa-check' : 'fas fa-times'));
+            CreateElement('i', td[4], 'lt-status-toggle ' + (Calculator.Lamp.Specs(this.lamps[i]).vaa ? 'fas fa-check' : 'fas fa-times'));
 
             td.forEach(e => tr.append(e));
             $(this.table).append(tr);

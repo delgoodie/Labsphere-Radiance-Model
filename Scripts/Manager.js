@@ -135,7 +135,10 @@ class Manager {
 
             new Button(this, li, 'times', Button.ACTION, () => this.removeTab(t.id));
 
-            $(li).on('click', function() { this.createTabList(t.id); }.bind(this));
+            $(li).on('click', function() {
+                this.createTabList(t.id);
+                t.update();
+            }.bind(this));
 
             if (t.id == (id !== undefined && id != 0 ? id : this.tab[this.tab.length - 1].id)) {
                 $(t.element).show();
@@ -148,7 +151,9 @@ class Manager {
                 $(li).css('border', '1px solid white');
                 $(li).css('border-bottom', 'none');
             }
+            if (t.traceColor != '#f7941e' && t.traceColor != '#1b75bc') $(li).css('background-color', t.traceColor);
         });
+
 
         new Button(this, this.tabList, 'plus-square' + (this.darkMode.val ? ' dark1' : ''), Button.ACTION, () => this.addTab(undefined, 'Model'));
 

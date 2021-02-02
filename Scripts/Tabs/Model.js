@@ -35,7 +35,7 @@ class Model {
             this.portCount.val = Calculator.Model.GetNumPorts(sD);
             this.update();
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
-        }, { content: [6, 8, 12, 20, 40, 65, 76], value: 8 });
+        }, { content: [6, 8, 12, 20, 30, 40, 65, 76], value: 8 });
 
         this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => {}, { value: '0W' });
 
@@ -225,7 +225,7 @@ class Model {
         this.portFraction.val = pf + '%';
         this.portRatio.val = Calculator.Math.Round(this.portDiameter.val / this.sphereDiameter.val, 2);
         let tp = 0;
-        for (let i = 0; i < this.lampTable.lamps.length; i++) tp += Lamp.getLamp(this.lampTable.lamps[i]).power * this.lampTable.onQty[i];
+        for (let i = 0; i < this.lampTable.lamps.length; i++) tp += Calculator.Lamp.Specs(this.lampTable.lamps[i]).power * this.lampTable.onQty[i];
 
         this.totalPower.val = tp + 'W';
         if (this.portRatio.val > .33) $(this.portRatio.text).addClass('model-param-flag');

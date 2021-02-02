@@ -214,5 +214,3 @@ class Upload extends Parameter {
         return $(this.value).val();
     }
 }
-
-$(window).on('click', function(e) { if (!$(e.target).hasClass('param-dropfield') && !$(e.target).hasClass('param-dropvalue')) $('.param-dropcontent:visible').slideUp(100); });

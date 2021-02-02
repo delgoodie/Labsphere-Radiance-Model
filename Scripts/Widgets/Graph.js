@@ -18,9 +18,9 @@ class Graph {
         if (_d && 'units' in _d) this.units.set(_d.units);
 
         this.download = new Button(this.top, this.element, 'file-download graph-button', Button.ACTION, () => this.updateValue('download'), { tooltip: 'Download' });
-        this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
+        this.load = new Button(this.top, this.element, 'file-upload graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
         this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'), { tooltip: 'Calculate Reverse Model' });
-        this.load = new Button(this.top, this.element, 'dot-circle graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
+        this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
         this.colorPicker = CreateElement('input', this.element, 'graph-button graph-color');
         $(this.colorPicker).attr('type', 'color');
         $(this.colorPicker).val(_d.color ? _d.color : (this.top.darkMode.val ? '#f7941e' : '#1b75bc'));
@@ -78,5 +78,6 @@ class Graph {
     toggleDarkMode(s) {
         $(this.element).toggleClass('dark1', s);
         if ($(this.colorPicker).val() == '#f7941e' || $(this.colorPicker).val() == '#1b75bc') $(this.colorPicker).val(s ? '#f7941e' : '#1b75bc');
+        $(this.colorPicker).css('background-color', s ? 'white' : 'black');
     }
 }

@@ -29,6 +29,7 @@ class LampSelector extends Pane {
 
         this.power = new Input(this.top, this.element, { container: 'ls-power-container', field: 'ls-power-field', value: 'ls-power-input' }, 'Power', Parameter.RIGHT, () => this.update(), { value: '' });
     }
+
     onClose() {}
 
     onSelect() {
@@ -36,7 +37,6 @@ class LampSelector extends Pane {
             this.updateValue(this.selectedLamp);
         }
     }
-
 
     update() {
         let content = Object.getOwnPropertyNames(LampData).filter(n => ((LampData[n].type == this.type.val || this.type.val == 'All') && (LampData[n].power == this.power.val || (this.power.val == 0 || this.power.val == ''))) && (!(this.type.val == 'QTH Internal' || this.type.val == 'QTH External') || (n.substring(n.length - 4, n.length) != '2856' && this.derated.val == 'NO' || n.substring(n.length - 4, n.length) == '2856' && this.derated.val == 'YES'))).map(n => ({ text: n }));
