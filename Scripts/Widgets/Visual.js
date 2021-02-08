@@ -35,7 +35,7 @@ class Visual {
         this.canvas.height = height;
         $(this.canvas).css('margin-left', (width - height) * .5);
 
-        $(this.sphere).attr('src', 'Resources/Images/sphere-' + mdl.sphereDiameter + '.png');
+        $(this.sphere).attr('src', SERVER_PATH + '/sphere-' + mdl.sphereDiameter);
 
         let radius = 0;
         let scale = height * 0.04560252836;

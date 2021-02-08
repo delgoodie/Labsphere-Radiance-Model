@@ -16,7 +16,7 @@ class LampUpload extends Pane {
     onCreate(_d) {
         this.name = new Input(this.top, this.element, { container: 'lu-param-wide' }, 'Name', Parameter.DOWN, () => {});
 
-        this.type = new Dropdown(this.top, this.element, { container: 'lu-param-wide' }, 'Type', Parameter.DOWN, () => {}, { content: ['HIS', 'HES', 'Xenon', 'Plasma', 'Other'] })
+        this.type = new Dropdown(this.top, this.element, { container: 'lu-param-wide' }, 'Type', Parameter.DOWN, () => {}, { content: ['QTH Internal', 'QTH External', 'Xenon', 'Plasma', 'Other'] })
 
         this.portDiameter = new Input(this.top, this.element, { container: 'lu-param-short' }, 'Port Diameter (in)', Parameter.DOWN, () => {});
 

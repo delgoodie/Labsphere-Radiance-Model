@@ -20,7 +20,7 @@ class Model {
         $(this.specs).addClass('model-specs');
 
         this.name = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Name', Parameter.DOWN, () => {
-            this.top.createTabList(this.id);
+            this.top.CreateTabList(this.id);
             this.update();
         }, { value: 'Untitled' });
 

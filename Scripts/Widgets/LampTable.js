@@ -155,7 +155,6 @@ class LampTable {
                 }
             }
 
-
             $(td[3]).text(Calculator.Lamp.Specs(this.lamps[i]).power + 'W');
             $(td[3]).addClass('lt-derived');
 

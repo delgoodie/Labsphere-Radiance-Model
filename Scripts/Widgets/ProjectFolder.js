@@ -1,5 +1,5 @@
 class ProjectFolder extends Pane {
-    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d) {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d = { projects: {} }) {
         super(_top, _parent, _classes, _updateValue, {
             width: '30vw',
             height: '50vh',
@@ -87,6 +87,7 @@ class ProjectFolder extends Pane {
     update(projects) {
         $(this.projectList).empty();
         for (let proj in projects) {
+            if (projects[proj].name == undefined) continue;
             let p = document.createElement('div');
             $(p).addClass('proj-value');
             $(this.projectList).append(p);
