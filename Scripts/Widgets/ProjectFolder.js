@@ -81,7 +81,7 @@ class ProjectFolder extends Pane {
     }
 
     onClose() {
-        if ($(this.projectList).children().length != 0) $(this.element).slideUp(slideSpeed);
+        if ($(this.projectList).children().length != 0) $(this.element).slideUp(SLIDE_SPEED);
     }
 
     update(projects) {
@@ -102,7 +102,7 @@ class ProjectFolder extends Pane {
 
             $(p).on('click', function() {
                 this.updateValue('open', proj);
-                $(this.element).slideUp(slideSpeed);
+                $(this.element).slideUp(SLIDE_SPEED);
             }.bind(this));
 
             $(input).on('click', function(e) { e.stopPropagation(); }.bind(this));

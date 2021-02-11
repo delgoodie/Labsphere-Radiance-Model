@@ -66,10 +66,10 @@ class Pane {
         }
     }
     defaultOnClose() {
-        $(this.element).slideUp(slideSpeed);
+        $(this.element).slideUp(SLIDE_SPEED);
     }
     defaultOnSelect() {
-        $(this.element).slideUp(slideSpeed);
+        $(this.element).slideUp(SLIDE_SPEED);
     }
 
     defaultToggleDarkMode(s) {

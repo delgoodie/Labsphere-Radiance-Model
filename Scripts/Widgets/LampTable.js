@@ -128,7 +128,7 @@ class LampTable {
 
                 if (this.editable) {
                     $(td[0]).on('click', function() {
-                        $(this.lampSelector.element).slideDown(slideSpeed);
+                        $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
                 }
@@ -145,7 +145,7 @@ class LampTable {
 
                 if (this.editable) {
                     $(td[1]).on('click', function() {
-                        $(this.lampSelector.element).slideDown(slideSpeed);
+                        $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
                     $(td[2]).on('click', function() {

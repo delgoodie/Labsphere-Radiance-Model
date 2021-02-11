@@ -71,7 +71,7 @@ class Model {
                         this.reverse();
                         break;
                     case 'model':
-                        $(this.customLoad.element).slideDown(slideSpeed);
+                        $(this.customLoad.element).slideDown(SLIDE_SPEED);
                         break;
                     case 'color':
                         this.traceColor = value;

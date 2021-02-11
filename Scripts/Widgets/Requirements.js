@@ -178,7 +178,7 @@ class Requirements {
         }.bind(this));
         $(spectralUpload).on('click', function(e) {
             e.stopPropagation();
-            $(this.upload.element).slideToggle(slideSpeed);
+            $(this.upload.element).slideToggle(SLIDE_SPEED);
         }.bind(this));
         //#endregion
 

@@ -51,4 +51,50 @@ class IO {
         a.click();
         a.remove();
     }
+
+    static async LoadResources() {
+        let promises = [];
+        await fetch(SERVER_PATH + '/lamp?name=*', { method: 'GET' }).then(res => res.json().then(json => {
+            json.forEach(l => {
+                LampData[l.name.replaceAll('_', ' ')] = { portDiameter: l.port_diameter, vaa: l.vaa == 1, type: l.type, power: l.power, voltage: l.voltage };
+                FluxData[l.name.replaceAll('_', ' ')] = l.flux;
+            });
+        }));
+        return Promise.all(promises);
+    }
+
+    static LoginUser = async(_username, _password) => fetch(SERVER_PATH + '/user?username=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
+
+
+    static CreateUser = async(_username, _password) => fetch(SERVER_PATH + '/user?name=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
+
+
+    static async ClearUser(_username, _password) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('PUT', 'http://localhost:3000/user?username=' + _username + '&password=' + _password);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send('');
+        location.reload();
+    }
+
+    static async SaveUser(_username, _password, _json) {
+        _json = JSON.stringify(_json);
+        let xhr = new XMLHttpRequest();
+        xhr.open('PUT', 'http://localhost:3000/user?username=' + _username + '&password=' + _password);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(_json);
+    }
 }
+
+/*
+Object.getOwnPropertyNames(LampData).forEach((n, i) => {
+    if (i != 28) return;
+    let flux = {};
+    FluxData[n].forEach((f, i) => flux[i + 250] = f);
+    var json = JSON.stringify(flux);
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", 'http://localhost:3000/lamp?name=' + n + '&portDiameter=' + LampData[n].portDiameter + '&vaa=' + LampData[n].vaa + '&type=' + LampData[n].type + '&power=' + LampData[n].power + '&voltage=' + LampData[n].voltage);
+    xhr.setRequestHeader("Content-Type", "application/json");
+    console.log(xhr.send(json));
+});
+*/

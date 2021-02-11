@@ -3,7 +3,7 @@
     "name": "Labsphere Web Radiance App",
     "description": "Labsphere web tool that predicts sphere models",
     "icons": [{
-        "src": "http://localhost:3000/sphere",
+        "src": "http://localhost:3000/resource/sphere",
         "type": "image/png",
         "sizes": "144x144"
     }],
