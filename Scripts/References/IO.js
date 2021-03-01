@@ -63,15 +63,15 @@ class IO {
         return Promise.all(promises);
     }
 
-    static LoginUser = async(_username, _password) => fetch(SERVER_PATH + '/user?username=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
+    static LoginUser = async(_username, _password) => fetch(SERVER_PATH + '/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
 
 
-    static CreateUser = async(_username, _password) => fetch(SERVER_PATH + '/user?name=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
+    static CreateUser = async(_username, _password) => fetch(SERVER_PATH + '/user?email=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
 
 
     static async ClearUser(_username, _password) {
         var xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:3000/user?username=' + _username + '&password=' + _password);
+        xhr.open('PUT', 'http://localhost:3000/user?email=' + _username + '&password=' + _password);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send('');
         location.reload();
@@ -80,21 +80,26 @@ class IO {
     static async SaveUser(_username, _password, _json) {
         _json = JSON.stringify(_json);
         let xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:3000/user?username=' + _username + '&password=' + _password);
+        xhr.open('PUT', 'http://localhost:3000/user?email=' + _username + '&password=' + _password);
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(_json);
     }
 }
 
-/*
-Object.getOwnPropertyNames(LampData).forEach((n, i) => {
-    if (i != 28) return;
-    let flux = {};
-    FluxData[n].forEach((f, i) => flux[i + 250] = f);
-    var json = JSON.stringify(flux);
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", 'http://localhost:3000/lamp?name=' + n + '&portDiameter=' + LampData[n].portDiameter + '&vaa=' + LampData[n].vaa + '&type=' + LampData[n].type + '&power=' + LampData[n].power + '&voltage=' + LampData[n].voltage);
-    xhr.setRequestHeader("Content-Type", "application/json");
-    console.log(xhr.send(json));
-});
-*/
+
+//UPLOAD LAMP DATA
+
+// Object.getOwnPropertyNames(LampData).forEach((n, i) => {
+//     let flux = {};
+//     FluxData[n].forEach((f, i) => flux[i + 250] = f);
+//     flux.portDiameter = LampData[n].portDiameter;
+//     flux.vaa = LampData[n].vaa;
+//     flux.type = LampData[n].type;
+//     flux.power = LampData[n].power;
+//     flux.voltage = LampData[n].voltage;
+//     var json = JSON.stringify(flux);
+//     var xhr = new XMLHttpRequest();
+//     xhr.open("POST", 'http://labspheretools.com/lamp?email=wdelgiudice@labsphere.com&password=10639&name=' + n);
+//     xhr.setRequestHeader("Content-Type", "application/json");
+//     console.log(xhr.send(json));
+// });
