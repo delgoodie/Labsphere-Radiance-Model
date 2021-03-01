@@ -1,4 +1,4 @@
-const SERVER_PATH = 'http://localhost:3000';
+const SERVER_PATH = 'http://labspheretools.com';
 const SLIDE_SPEED = 300;
 var FluxData = {};
 var LampData = {};

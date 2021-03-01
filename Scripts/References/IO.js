@@ -54,7 +54,7 @@ class IO {
 
     static async LoadResources() {
         let promises = [];
-        await fetch(SERVER_PATH + '/lamp?name=*', { method: 'GET' }).then(res => res.json().then(json => {
+        await fetch('/lamp?name=*', { method: 'GET' }).then(res => res.json().then(json => {
             json.forEach(l => {
                 LampData[l.name.replaceAll('_', ' ')] = { portDiameter: l.port_diameter, vaa: l.vaa == 1, type: l.type, power: l.power, voltage: l.voltage };
                 FluxData[l.name.replaceAll('_', ' ')] = l.flux;
@@ -63,10 +63,10 @@ class IO {
         return Promise.all(promises);
     }
 
-    static LoginUser = async(_username, _password) => fetch(SERVER_PATH + '/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
+    static LoginUser = async(_username, _password) => fetch('/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
 
 
-    static CreateUser = async(_username, _password) => fetch(SERVER_PATH + '/user?email=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
+    static CreateUser = async(_username, _password) => fetch('/user?email=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
 
 
     static async ClearUser(_username, _password) {
