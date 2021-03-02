@@ -27,7 +27,7 @@ class IO {
     static async ParseJSON(file) { //e.dataTransfer.files[0]   e.target.files[0]
         let promise = new Promise((res, rej) => {
             let fileReader = new FileReader();
-            fileReader.onload = function(e) { res(JSON.parse(e.target.result)); }
+            fileReader.onload = function (e) { res(JSON.parse(e.target.result)); }
             fileReader.readAsText(file);
         });
         return promise;
@@ -62,27 +62,21 @@ class IO {
         }));
         return Promise.all(promises);
     }
-
-    static LoginUser = async(_username, _password) => fetch('/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
-
-
-    static CreateUser = async(_username, _password) => fetch('/user?email=' + _username + '&password=' + _password, { method: 'POST' }).then(() => IO.Login(_username, _password));
-
-
-    static async ClearUser(_username, _password) {
-        var xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:3000/user?email=' + _username + '&password=' + _password);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send('');
-        location.reload();
+    //Update Web Path
+    static async LoginUser(_username, _password) {
+        return fetch('/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
+    }
+    //Update Web Path
+    static async CreateUser(_username, _password) {
+        return fetch('/user?email=' + _username + '&password=' + _password, { method: 'PUT' }).then(() => IO.LoginUser(_username, _password));
     }
 
-    static async SaveUser(_username, _password, _json) {
-        _json = JSON.stringify(_json);
-        let xhr = new XMLHttpRequest();
-        xhr.open('PUT', 'http://localhost:3000/user?email=' + _username + '&password=' + _password);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(_json);
+    static async ClearUser(_username, _password) {
+        navigator.sendBeacon('/user?email=' + _username + '&password=' + _password, '{}')
+    }
+
+    static SaveUser(_username, _password, _json) {
+        navigator.sendBeacon('/user?email=' + _username + '&password=' + _password, JSON.stringify(_json))
     }
 }
 

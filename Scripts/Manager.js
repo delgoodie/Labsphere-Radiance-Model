@@ -13,17 +13,18 @@ var Manager = {
         Manager.head = $('.manager-head');
         Manager.body = $('.manager-body');
         Manager.projectHeader = CreateElement('div', Manager.head, 'manager-proj-title');
-        $(Manager.projectHeader).on('click', function() { $(Manager.projectFolder.element).slideDown(SLIDE_SPEED); }.bind(Manager));
+        $(Manager.projectHeader).on('click', function () { $(Manager.projectFolder.element).slideDown(SLIDE_SPEED); }.bind(Manager));
         CreateElement('i', Manager.projectHeader, 'fas fa-folder manager-proj-folder');
         Manager.projectTitle = CreateElement('span', Manager.projectHeader, '', '');
 
         let settings = CreateElement('div', Manager.head, 'manager-settings-container');
 
-        Manager.tools = new Button(Manager, settings, 'tools manager-settings-button', Button.ACTION, () => {}, { tooltip: 'tools' });
+        Manager.tools = new Button(Manager, settings, 'tools manager-settings-button', Button.ACTION, () => { }, { tooltip: 'tools' });
 
         Manager.wipe = new Button(Manager, settings, 'trash manager-settings-button', Button.ACTION, () => {
             if (!confirm('Wipe all projects?')) return;
-            IO.ClearUser(Manager.username, Manager.password).then(location.reload);
+            Manager.wiping = true;
+            location.reload();
         }, { tooltip: 'Wipe Memory' });
 
         Manager.darkMode = new Button(Manager, settings, 'moon manager-settings-button', Button.TOGGLE, s => Manager.toggleDarkMode(s), { state: false, tooltip: ['Light Mode', 'Dark Mode'] });
@@ -38,7 +39,7 @@ var Manager = {
 
         Manager.addLamp = new Button(Manager, settings, 'lightbulb manager-settings-button', Button.ACTION, () => $(Manager.lampUpload.element).slideDown(SLIDE_SPEED), { tooltip: 'Add Custom Lamp' });
 
-        Manager.docs = new Button(Manager, settings, 'question manager-settings-button', Button.ACTION, () => window.open('docs.html'), { tooltip: 'Docs' });
+        Manager.docs = new Button(Manager, settings, 'question manager-settings-button', Button.ACTION, () => window.open('/docs'), { tooltip: 'Docs' });
 
         Manager.userPane = new Pane(Manager, document.body, {}, (action, username, password) => {
             Manager.username = username;
@@ -54,8 +55,8 @@ var Manager = {
             disableSelect: true,
             draggable: false,
             onCreate: (self) => {
-                self.username = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Username', Parameter.RIGHT, () => {});
-                self.password = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Password', Parameter.RIGHT, () => {});
+                self.username = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Username', Parameter.RIGHT, () => { });
+                self.password = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Password', Parameter.RIGHT, () => { });
 
                 self.signin = new Button(Manager, self.element, 'user manager-user-button', Button.ACTION, () => self.updateValue('signin', self.username.val, self.password.val));
                 self.create = new Button(Manager, self.element, 'user-plus manager-user-button', Button.ACTION, () => self.updateValue('create', self.username.val, self.password.val));
@@ -63,8 +64,6 @@ var Manager = {
                 $(self.element).hide();
             },
         });
-
-        console.log(Manager.userPane);
 
         Manager.changeUser = new Button(Manager, settings, 'user-circle manager-settings-button', Button.ACTION, () => $(Manager.userPane.element).slideDown(SLIDE_SPEED), { tooltip: 'Change User' });
 
@@ -115,7 +114,7 @@ var Manager = {
 
     OpenProject(id) {
         if (id === undefined) return;
-        Manager.LocalSave();
+        if (Manager.current != -1) Manager.LocalSave();
         Manager.current = id;
         Manager.tab.forEach(t => $(t.element).remove());
         Manager.tab = [];
@@ -126,7 +125,7 @@ var Manager = {
 
     DeleteProject(id) {
         if (!id in Manager.projects) return;
-        $(Manager.body).children().each(function() { if ($(Manager).hasClass('tab-panel')) $(Manager).remove(); });
+        $(Manager.body).children().each(function () { if ($(Manager).hasClass('tab-panel')) $(Manager).remove(); });
         delete Manager.projects[id];
         Manager.projectFolder.update(Manager.projects);
         if (id == Manager.current && Object.keys(Manager.projects).length != 0) {
@@ -163,7 +162,7 @@ var Manager = {
 
             new Button(Manager, li, 'times', Button.ACTION, () => Manager.RemoveTab(t.id));
 
-            $(li).on('click', function() {
+            $(li).on('click', function () {
                 Manager.CreateTabList(t.id);
                 t.update();
             }.bind(Manager));
@@ -219,11 +218,18 @@ var Manager = {
         if (json == null) {
             json = {};
             $(Manager.userPane.element).show();
-        }
+        } else json = json.data;
+
+        Manager.projects = {};
+        Object.getOwnPropertyNames(json).forEach(name => {
+            if (name != 'settings') Manager.projects[name] = json[name];
+        });
 
         if (!json.settings) {
             Manager.darkMode.val = false;
             Manager.customLamps = {};
+            Manager.current = -1;
+            $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
         } else {
             Manager.darkMode.val = json.settings.darkMode;
             Manager.customLamps = json.settings.customLamps;
@@ -231,15 +237,8 @@ var Manager = {
                 LampData[n] = json.settings.customLamps[n].lampData;
                 FluxData[n] = json.settings.customLamps[n].fluxData;
             });
+            Manager.OpenProject(json.settings.activeProject);
         }
-
-        Manager.projects = {};
-        Object.getOwnPropertyNames(json).forEach(name => {
-            if (name != 'settings' && name != 'current') Manager.projects[name] = json[name];
-        });
-
-        if (json['current'] && json['current'] != -1 && json['current'] != 'current') Manager.OpenProject(json['current']);
-        else $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
 
         Manager.projectFolder.update(Manager.projects);
         $(Manager.userPane.element).hide();
@@ -265,7 +264,6 @@ var Manager = {
             customLamps: Manager.customLamps,
         }
         json['settings'] = settingsObj;
-        json['current'] = Manager.current;
 
         IO.SaveUser(Manager.username, Manager.password, json);
 
@@ -275,6 +273,7 @@ var Manager = {
 
     Unload() {
         if (!Manager.wiping) Manager.ServerSave();
+        else IO.ClearUser(Manager.username, Manager.password);
     },
 
     toggleDarkMode(s) {
