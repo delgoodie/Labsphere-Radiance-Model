@@ -296,12 +296,11 @@ var Calculator = {
 
             let wl = [];
             let checkWl = lmps => wl.some(l => lmps.every(lmp => l.some(lm => lm == lmp)));
-            for (;;) {
+            for (; ;) {
                 iteration++;
                 if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
                 else wl.push(model.lamps.slice());
                 if (iteration > 60) {
-                    console.log(wl);
                     console.error('Spectral Reverse Failed');
                     return model;
                 }
@@ -360,7 +359,7 @@ var Calculator = {
 
             let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
             let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
-            for (;;) {
+            for (; ;) {
                 //CHECK FLOW CONDITIONS
                 iteration++;
                 if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
@@ -490,7 +489,7 @@ var Calculator = {
 
         },
 
-        InbandReverse() {},
+        InbandReverse() { },
 
 
         IndexToPort(i) {
@@ -689,7 +688,7 @@ var Calculator = {
                 name: mdl.name,
                 x: wav,
                 y: wav.map((_, i) => {
-                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0) /* + blackbody flux */ )) / (piSA * (1 - ref[i] * wF));
+                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0) /* + blackbody flux */)) / (piSA * (1 - ref[i] * wF));
                     return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
                 }),
                 units: units,

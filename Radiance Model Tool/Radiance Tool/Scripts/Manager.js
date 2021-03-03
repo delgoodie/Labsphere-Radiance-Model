@@ -41,10 +41,65 @@ var Manager = {
 
         Manager.docs = new Button(Manager, settings, 'question manager-settings-button', Button.ACTION, () => window.open('http://www.labspheretools.com/docs'), { tooltip: 'Docs' });
 
+        Manager.darkModeEvent = new CustomEvent('darkMode', { bubbles: false, detail: { state: false } });
+
         Manager.userPane = new Pane(Manager, document.body, {}, (email, password) => {
             Manager.email = email;
             Manager.password = password;
-            IO.LoginUser(Manager.email, Manager.password).then(json => Manager.ParseLogin(json));
+            IO.LoginUser(Manager.email, Manager.password).then(json => {
+                if (json == null) {
+                    json = {};
+                } else if (json.error) {
+                    console.log(json.error);
+                    $(Manager.userPane.element).show();
+                    return;
+                }
+                else json = json.data;
+
+                Manager.tabList = document.createElement('ul');
+                $(Manager.tabList).attr('id', 'tab-list');
+                $(Manager.tabList).addClass('tab-bar');
+                $(Manager.head).append(Manager.tabList);
+
+                Manager.bigAdd = new Button(Manager, Manager.body, 'plus-square manager-big-add' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab(undefined, 'Model'));
+
+                Manager.projectFolder = new ProjectFolder(Manager, document.body, {}, (action, data, data2) => {
+                    if (action == 'open') Manager.OpenProject(data);
+                    else if (action == 'create') Manager.OpenProject(Manager.CreateProject());
+                    else if (action == 'upload') {
+                        Manager.projects[data.id] = data;
+                        Manager.OpenProject(data.id);
+                    } else if (action == 'delete') Manager.DeleteProject(data);
+                    else if (action == 'rename') {
+                        Manager.projects[data].name = data2;
+                        if (Manager.current == data) $(Manager.projectTitle).text(data2);
+                        Manager.projectFolder.update(Manager.projects);
+                    }
+                    Manager.projectFolder.update(Manager.projects);
+                });
+
+                Manager.projects = {};
+                Object.getOwnPropertyNames(json).forEach(name => {
+                    if (name != 'settings') Manager.projects[name] = json[name];
+                });
+
+                if (!json.settings) {
+                    Manager.darkMode.val = false;
+                    Manager.customLamps = {};
+                    Manager.current = -1;
+                    $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
+                } else {
+                    Manager.darkMode.val = json.settings.darkMode;
+                    Manager.customLamps = json.settings.customLamps;
+                    Object.getOwnPropertyNames(json.settings.customLamps).forEach(n => {
+                        LampData[n] = json.settings.customLamps[n].lampData;
+                        FluxData[n] = json.settings.customLamps[n].fluxData;
+                    });
+                    Manager.OpenProject(json.settings.activeProject);
+                }
+
+                Manager.projectFolder.update(Manager.projects);
+            });
         }, {
             width: '35vw',
             height: '45vh',
@@ -59,51 +114,14 @@ var Manager = {
                 $(self.link).attr('href', 'mailto:wdelgiudice@labsphere.com');
                 self.email = new Input(Manager, self.element, { container: 'manager-user-param', field: 'manager-user-field', value: 'manager-user-value' }, 'Email', Parameter.RIGHT, () => { });
                 self.password = new Input(Manager, self.element, { container: 'manager-user-param', field: 'manager-user-field', value: 'manager-user-value' }, 'Password', Parameter.RIGHT, () => { });
-
+                $(self.password.value).attr('type', 'password');
                 $(self.element).hide();
             },
             onSelect: (self) => self.updateValue(self.email.val, self.password.val),
         });
 
-        Manager.changeUser = new Button(Manager, settings, 'user-circle manager-settings-button', Button.ACTION, () => $(Manager.userPane.element).slideDown(SLIDE_SPEED), { tooltip: 'Change User' });
-
-        Manager.darkModeEvent = new CustomEvent('darkMode', { bubbles: false, detail: { state: false } });
-
-        Manager.tabList = document.createElement('ul');
-        $(Manager.tabList).attr('id', 'tab-list');
-        $(Manager.tabList).addClass('tab-bar');
-        $(Manager.head).append(Manager.tabList);
-
-        Manager.bigAdd = new Button(Manager, Manager.body, 'plus-square manager-big-add' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab(undefined, 'Model'));
-
-        Manager.projectFolder = new ProjectFolder(Manager, document.body, {}, (action, data, data2) => {
-            if (action == 'open') Manager.OpenProject(data);
-            else if (action == 'create') Manager.OpenProject(Manager.CreateProject());
-            else if (action == 'upload') {
-                Manager.projects[data.id] = data;
-                Manager.OpenProject(data.id);
-            } else if (action == 'delete') Manager.DeleteProject(data);
-            else if (action == 'rename') {
-                Manager.projects[data].name = data2;
-                if (Manager.current == data) $(Manager.projectTitle).text(data2);
-                Manager.projectFolder.update(Manager.projects);
-            }
-            Manager.projectFolder.update(Manager.projects);
-        });
-
-        if (localStorage.getItem('email')) {
-            Manager.email = localStorage.getItem('email');
-            Manager.password = localStorage.getItem('password');
-            Manager.userPane.email.val = Manager.email;
-            Manager.userPane.password.val = Manager.password;
-            IO.LoginUser(Manager.email, Manager.password).then(json => {
-                Manager.ParseLogin(json);
-                $('.splashscreen').slideUp(500)
-            });
-        } else {
-            $(Manager.userPane.element).show();
-            $('.splashscreen').slideUp(500);
-        }
+        $(Manager.userPane.element).show();
+        $('.splashscreen').slideUp(500);
     },
 
     get globalTraces() {
@@ -214,36 +232,6 @@ var Manager = {
         Manager.CreateTabList();
     },
 
-    ParseLogin(json) {
-        if (json == null) {
-            json = {};
-            $(Manager.userPane.element).show();
-        } else json = json.data;
-
-        Manager.projects = {};
-        Object.getOwnPropertyNames(json).forEach(name => {
-            if (name != 'settings') Manager.projects[name] = json[name];
-        });
-
-        if (!json.settings) {
-            Manager.darkMode.val = false;
-            Manager.customLamps = {};
-            Manager.current = -1;
-            $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
-        } else {
-            Manager.darkMode.val = json.settings.darkMode;
-            Manager.customLamps = json.settings.customLamps;
-            Object.getOwnPropertyNames(json.settings.customLamps).forEach(n => {
-                LampData[n] = json.settings.customLamps[n].lampData;
-                FluxData[n] = json.settings.customLamps[n].fluxData;
-            });
-            Manager.OpenProject(json.settings.activeProject);
-        }
-
-        Manager.projectFolder.update(Manager.projects);
-        $(Manager.userPane.element).hide();
-    },
-
     LocalSave() {
         if (Manager.current == -1 || !(Manager.current in Manager.projects)) return;
         let proj = {};
@@ -266,9 +254,6 @@ var Manager = {
         json['settings'] = settingsObj;
 
         IO.SaveUser(Manager.email, Manager.password, json);
-
-        localStorage.setItem('email', Manager.email);
-        localStorage.setItem('password', Manager.password);
     },
 
     Unload() {
