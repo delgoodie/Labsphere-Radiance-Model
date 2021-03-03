@@ -1,0 +1,61 @@
+.unit-container {
+    width: 17vw;
+    height: 4.2vh;
+}
+
+.unit-param-container {
+    margin: 0;
+    width: 16%;
+    height: 100%;
+    border-left: none;
+    border-right: none;
+}
+
+.unit-field {
+    line-height: 4vh;
+    width: 0 !important;
+    border: none;
+}
+
+.unit-toggle {
+    padding: 0;
+    line-height: 4vh;
+    width: 100% !important;
+    border: none;
+}
+
+.unit-header {
+    display: block;
+    width: 20%;
+    height: 100%;
+    float: left;
+    background-color: rgb(27, 117, 188);
+    color: black;
+    text-align: center;
+    font-size: 3vh;
+    line-height: 4vh;
+    border: 1px solid black;
+    border-collapse: collapse;
+    box-sizing: border-box;
+}
+
+.unit-operator {
+    display: block;
+    height: 100%;
+    float: left;
+    background-color: white;
+    color: black;
+    text-align: center;
+    font-size: 3vh;
+    line-height: 4vh;
+    padding: 0 .5%;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    box-sizing: border-box;
+}
+
+.unit-operator-end {
+    font-size: 2.3vh;
+    line-height: 3.8vh;
+    border-right: 1px solid black;
+}

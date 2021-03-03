@@ -1,0 +1,178 @@
+.ls-container {
+    background-color: white;
+    width: 22vw;
+    height: 40vh;
+    position: absolute;
+    z-index: 10;
+    border: 1vmin solid grey;
+    border-radius: 4vmin;
+    cursor: pointer;
+}
+
+.ls-title {
+    display: block;
+    width: 60%;
+    text-align: center;
+    margin: -.1% 20%;
+    margin-right: 0;
+    padding: 3% 0;
+    background-color: rgb(27, 117, 188);
+    color: white;
+    font-size: 2.5vh;
+    border-bottom-left-radius: 5vh;
+    border-bottom-right-radius: 5vh;
+    float: left;
+}
+
+.ls-close {
+    display: block;
+    margin-right: 1%;
+    margin-top: 1%;
+    width: 4%;
+    height: 4%;
+    text-align: center;
+    background-color: lightcoral;
+    padding: 1vmin;
+    border-radius: 5vmin;
+    float: right;
+    font-size: 1.9vh;
+    line-height: 1.6vh;
+    font-weight: 600;
+}
+
+
+/*#region TYPE */
+
+.ls-type-container {
+    height: 10%;
+    width: 42%;
+    margin-right: 0;
+    margin-left: 3%;
+    margin-bottom: 0;
+}
+
+.ls-type-field {
+    font-size: 2vh;
+    line-height: 4vh;
+    width: 30% !important;
+}
+
+.ls-type-dropdown {
+    width: 70% !important;
+    text-align: center;
+    outline: 1px solid black;
+}
+
+.ls-type-dropfield {
+    line-height: 4vh;
+    font-size: 2vh;
+}
+
+
+/*#endregion TYPE */
+
+
+/*#region DERATED */
+
+.ls-derated-container {
+    height: 10%;
+    width: 34%;
+    margin-left: 3%;
+}
+
+.ls-derated-field {
+    font-size: 2vh;
+    line-height: 4vh;
+    width: 65% !important;
+}
+
+.ls-derated-toggle {
+    font-size: 2vh;
+    width: 35% !important;
+}
+
+
+/*#endregion DERATED */
+
+
+/*#region POWER */
+
+.ls-power-container {
+    height: 10%;
+    width: 30%;
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 3%;
+}
+
+.ls-power-field {
+    font-size: 2vh;
+    width: 60% !important;
+    height: 100% !important;
+    line-height: 4vh;
+}
+
+.ls-power-input {
+    font-size: 2vh !important;
+    width: 40% !important;
+    box-sizing: border-box;
+    height: 100%;
+}
+
+
+/*#endregion POWER */
+
+.ls-lamp-container {
+    border: 1px solid black;
+    height: 60%;
+    width: 43%;
+    margin-top: 5%;
+    margin-left: 0;
+    margin-right: .7vw;
+    margin-bottom: 2%;
+    float: right;
+    overflow-y: scroll;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.ls-lamp-container::-webkit-scrollbar {
+    display: none;
+}
+
+.ls-lamp-value {
+    position: relative;
+    display: block;
+    font-size: 1vmax;
+    background: white;
+    color: black;
+    text-decoration: none;
+    margin-top: 1px;
+    width: 100%;
+    height: 4.2vh;
+    outline: 1px solid black;
+    text-align: center;
+    cursor: pointer;
+    line-height: 4.5vh;
+    border-bottom: hidden;
+    white-space: nowrap;
+}
+
+.ls-lamp-selected {
+    border: 3px solid red;
+    width: 97%;
+}
+
+.ls-select {
+    float: left;
+    display: block;
+    width: 40%;
+    text-align: center;
+    margin: 1.5% 30%;
+    padding: 3% 0;
+    background-color: rgb(27, 117, 188);
+    color: white;
+    font-size: 2.5vh;
+    border-radius: 5vh;
+}
