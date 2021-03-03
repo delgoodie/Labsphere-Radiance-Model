@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang='en-us' dir='ltr'>
+<meta charset='UTF-8'>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<head>
+    <script>
+        async function CreateUser(_username, _password) {
+            return fetch('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, { method: 'PUT' }).then(() => IO.LoginUser(_username, _password));
+        }
+    </script>
+</head>
+
+<body>
+
+
+</body>
+
+</html>

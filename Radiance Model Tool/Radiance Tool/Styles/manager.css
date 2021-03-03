@@ -91,6 +91,15 @@
 }
 
 
+.manager-user-create{
+    display: block;
+    float: right;
+    margin: 3% 0;
+    width: 100%;
+    text-align: center;
+} 
+
+
 /*#region TAB BAR */
 
 .tab-bar {
@@ -167,10 +176,24 @@
 }
 
 .manager-user-param {
-    width: 45%;
-    margin: 10% 2.5%;
-    margin-bottom: 0;
-    height: 14%;
+    width: 80%;
+    margin: 0 10%;
+    margin-bottom: 20%;
+    margin-bottom: 5%;
+    height: 15%;
+}
+
+.manager-user-field {
+    width: 25%;
+    line-height: 6vh;
+    font-size: 2.6vh;
+}
+
+.manager-user-value {
+    font-size: 2.6vh;
+    width: 75%;
+    text-align: left;
+    padding-left: 2.5%;
 }
 
 .manager-user-button {

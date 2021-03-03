@@ -66,10 +66,6 @@ class IO {
     static async LoginUser(_username, _password) {
         return fetch('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
     }
-    //Update Web Path
-    static async CreateUser(_username, _password) {
-        return fetch('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, { method: 'PUT' }).then(() => IO.LoginUser(_username, _password));
-    }
 
     static async ClearUser(_username, _password) {
         navigator.sendBeacon('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, '{}')
@@ -79,21 +75,3 @@ class IO {
         navigator.sendBeacon('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, JSON.stringify(_json))
     }
 }
-
-
-//UPLOAD LAMP DATA
-
-// Object.getOwnPropertyNames(LampData).forEach((n, i) => {
-//     let flux = {};
-//     FluxData[n].forEach((f, i) => flux[i + 250] = f);
-//     flux.portDiameter = LampData[n].portDiameter;
-//     flux.vaa = LampData[n].vaa;
-//     flux.type = LampData[n].type;
-//     flux.power = LampData[n].power;
-//     flux.voltage = LampData[n].voltage;
-//     var json = JSON.stringify(flux);
-//     var xhr = new XMLHttpRequest();
-//     xhr.open("POST", 'http://labspheretools.com/lamp?email=wdelgiudice@labsphere.com&password=10639&name=' + n);
-//     xhr.setRequestHeader("Content-Type", "application/json");
-//     console.log(xhr.send(json));
-// });

@@ -5,7 +5,7 @@ var Manager = {
     projects: {},
     wiping: false,
     customLamps: {},
-    username: '',
+    email: '',
     password: '',
 
 
@@ -41,28 +41,28 @@ var Manager = {
 
         Manager.docs = new Button(Manager, settings, 'question manager-settings-button', Button.ACTION, () => window.open('http://www.labspheretools.com/docs'), { tooltip: 'Docs' });
 
-        Manager.userPane = new Pane(Manager, document.body, {}, (action, username, password) => {
-            Manager.username = username;
+        Manager.userPane = new Pane(Manager, document.body, {}, (email, password) => {
+            Manager.email = email;
             Manager.password = password;
-            if (action == 'signin') IO.LoginUser(Manager.username, Manager.password).then(json => Manager.ParseLogin(json));
-            else if (action == 'create') IO.CreateUser(Manager.username, Manager.password).then(json => Manager.ParseLogin(json));
+            IO.LoginUser(Manager.email, Manager.password).then(json => Manager.ParseLogin(json));
         }, {
-            width: '25vw',
-            height: '30vh',
-            left: '37.5vw',
-            top: '35vh',
+            width: '35vw',
+            height: '45vh',
+            left: '32.5vw',
+            top: '25vh',
             title: 'Account',
-            disableSelect: true,
+            select: 'Sign In',
             draggable: false,
             onCreate: (self) => {
-                self.username = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Username', Parameter.RIGHT, () => { });
-                self.password = new Input(Manager, self.element, { container: 'manager-user-param' }, 'Password', Parameter.RIGHT, () => { });
-
-                self.signin = new Button(Manager, self.element, 'user manager-user-button', Button.ACTION, () => self.updateValue('signin', self.username.val, self.password.val));
-                self.create = new Button(Manager, self.element, 'user-plus manager-user-button', Button.ACTION, () => self.updateValue('create', self.username.val, self.password.val));
+                self.create = CreateElement('div', self.element, 'manager-user-create', 'To create an account email ');
+                self.link = CreateElement('a', self.create, '', 'wdelgiudice@labsphere.com');
+                $(self.link).attr('href', 'mailto:wdelgiudice@labsphere.com');
+                self.email = new Input(Manager, self.element, { container: 'manager-user-param', field: 'manager-user-field', value: 'manager-user-value' }, 'Email', Parameter.RIGHT, () => { });
+                self.password = new Input(Manager, self.element, { container: 'manager-user-param', field: 'manager-user-field', value: 'manager-user-value' }, 'Password', Parameter.RIGHT, () => { });
 
                 $(self.element).hide();
             },
+            onSelect: (self) => self.updateValue(self.email.val, self.password.val),
         });
 
         Manager.changeUser = new Button(Manager, settings, 'user-circle manager-settings-button', Button.ACTION, () => $(Manager.userPane.element).slideDown(SLIDE_SPEED), { tooltip: 'Change User' });
@@ -91,12 +91,12 @@ var Manager = {
             Manager.projectFolder.update(Manager.projects);
         });
 
-        if (localStorage.getItem('username')) {
-            Manager.username = localStorage.getItem('username');
+        if (localStorage.getItem('email')) {
+            Manager.email = localStorage.getItem('email');
             Manager.password = localStorage.getItem('password');
-            Manager.userPane.username.val = Manager.username;
+            Manager.userPane.email.val = Manager.email;
             Manager.userPane.password.val = Manager.password;
-            IO.LoginUser(Manager.username, Manager.password).then(json => {
+            IO.LoginUser(Manager.email, Manager.password).then(json => {
                 Manager.ParseLogin(json);
                 $('.splashscreen').slideUp(500)
             });
@@ -265,15 +265,15 @@ var Manager = {
         }
         json['settings'] = settingsObj;
 
-        IO.SaveUser(Manager.username, Manager.password, json);
+        IO.SaveUser(Manager.email, Manager.password, json);
 
-        localStorage.setItem('username', Manager.username);
+        localStorage.setItem('email', Manager.email);
         localStorage.setItem('password', Manager.password);
     },
 
     Unload() {
         if (!Manager.wiping) Manager.ServerSave();
-        else IO.ClearUser(Manager.username, Manager.password);
+        else IO.ClearUser(Manager.email, Manager.password);
     },
 
     toggleDarkMode(s) {
