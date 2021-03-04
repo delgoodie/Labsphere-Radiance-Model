@@ -1,5 +1,5 @@
 class LampTable {
-    constructor(_top, _parent, _classes = {}, _editable, _grayMode, _updateValue = () => {}) {
+    constructor(_top, _parent, _classes = {}, _editable, _grayMode, _updateValue = () => { }) {
         this.top = _top;
         this.parent = _parent;
         this.classes = _classes;
@@ -9,10 +9,11 @@ class LampTable {
         this.lamps = [];
         this.qty = [];
         this.onQty = [];
+        this.va = [];
         this.portCount = 0;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.element).attr('id', this.id);
         $(this.element).addClass('lt-container');
 
@@ -33,10 +34,11 @@ class LampTable {
 
     update(d) {
         this.lampSelector.update();
-        if (typeof(d) == 'object') {
+        if (typeof (d) == 'object') {
             this.lamps = d.lamps;
             this.qty = d.qty;
             this.onQty = d.onQty;
+            this.va = d.va;
             this.portCount = d.qty.reduce((s, q) => s + q, 0);
         } else {
             this.portCount = d ? d : 0;
@@ -80,7 +82,7 @@ class LampTable {
             $(th[2]).text('Status');
         }
         $(th[3]).text('Power');
-        $(th[4]).text('VAA');
+        $(th[4]).text('VA');
 
         th.forEach(e => $(tr).append(e));
         $(this.table).append(tr);
@@ -117,17 +119,17 @@ class LampTable {
                 $(onQty).val(this.onQty[i]);
                 $(td[2]).addClass('lt-qty');
                 $(td[2]).append(onQty);
-                $(qty).on('change', function() {
+                $(qty).on('change', function () {
                     if ($(qty).val() * 1 >= 0 && $(qty).val() * 1 != NaN) this.qty[i] = Math.min($(qty).val() * 1, this.portCount - this.qty.reduce((s, q) => s + q, 0) + this.qty[i]);
                     this.updateValue();
                 }.bind(this));
-                $(onQty).on('change', function() {
+                $(onQty).on('change', function () {
                     if ($(onQty).val() * 1 >= 0 && $(onQty).val() * 1 != NaN) this.onQty[i] = Math.min($(onQty).val() * 1, this.qty[i]);
                     this.updateValue();
                 }.bind(this));
 
                 if (this.editable) {
-                    $(td[0]).on('click', function() {
+                    $(td[0]).on('click', function () {
                         $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
@@ -144,11 +146,11 @@ class LampTable {
                 CreateElement('i', td[2], 'lt-status-toggle ' + (this.onQty[i] == 1 ? 'fas fa-toggle-on' : 'fas fa-toggle-off'));
 
                 if (this.editable) {
-                    $(td[1]).on('click', function() {
+                    $(td[1]).on('click', function () {
                         $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
-                    $(td[2]).on('click', function() {
+                    $(td[2]).on('click', function () {
                         this.onQty[i] = ($(td[2]).hasClass('lt-status-off') ? 1 : 0);
                         this.updateValue();
                     }.bind(this));
@@ -158,8 +160,25 @@ class LampTable {
             $(td[3]).text(Calculator.Lamp.Specs(this.lamps[i]).power + 'W');
             $(td[3]).addClass('lt-derived');
 
-            $(td[4]).addClass('lt-derived');
-            CreateElement('i', td[4], 'lt-status-toggle ' + (Calculator.Lamp.Specs(this.lamps[i]).vaa ? 'fas fa-check' : 'fas fa-times'));
+            $(td[4]).addClass('lt-va');
+            let self = this;
+            if (Calculator.Lamp.Specs(this.lamps[i]).va)
+                $(CreateElement('div', td[4], 'lt-va-slider')).slider({
+                    animate: "fast",
+                    min: 0,
+                    max: 1,
+                    value: this.va[i],
+                    step: .01,
+                    stop: function () {
+                        self.va[i] = $(this).slider('value');
+                        self.updateValue();
+                    },
+                    classes: {
+                        "ui-slider": "lt-va-slider-range",
+                        "ui-slider-handle": "lt-va-slider-handle"
+                    }
+                });
+            else CreateElement('i', td[4], 'lt-status-toggle fas fa-times');
 
             td.forEach(e => tr.append(e));
             $(this.table).append(tr);
@@ -168,7 +187,7 @@ class LampTable {
             let tr = CreateElement('tr', this.table, 'lt-row');
             let add = CreateElement('td', tr, 'fas fa-plus lt-add-button');
             if (this.top.darkMode.val) $(add).addClass('dark3');
-            $(add).on('click', function() {
+            $(add).on('click', function () {
                 this.lamps.push('Empty');
                 this.qty.push(0);
                 this.onQty.push(0);
@@ -180,7 +199,7 @@ class LampTable {
             let remove = CreateElement('td', tr, 'fas fa-minus lt-remove-button');
             if (this.top.darkMode.val) $(remove).css('color', 'black');
             $(tr).append(remove);
-            $(remove).on('click', function() {
+            $(remove).on('click', function () {
                 this.lamps.pop();
                 this.qty.pop();
                 this.onQty.pop();

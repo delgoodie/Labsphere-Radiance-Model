@@ -9,7 +9,7 @@ class Model {
         this.traceColor = _d ? _d.traceColor : (this.top.darkMode.val ? '#f7941e' : '#1b75bc');
         this.element = document.createElement('div');
 
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
 
         $(this.element).attr('id', this.id);
         $(this.element).addClass('model-container');
@@ -29,7 +29,7 @@ class Model {
             this.update();
         }, { value: 2 });
 
-        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => {}, { value: '0%' });
+        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => { }, { value: '0%' });
 
         this.sphereDiameter = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Sphere Diameter', Parameter.DOWN, (sD) => {
             this.portCount.val = Calculator.Model.GetNumPorts(sD);
@@ -37,14 +37,14 @@ class Model {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: [6, 8, 12, 20, 30, 40, 65, 76], value: 8 });
 
-        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => {}, { value: '0W' });
+        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => { }, { value: '0W' });
 
         this.material = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Material', Parameter.DOWN, () => {
             this.update();
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: ['Spectraflect', 'Permaflect', 'Gold', 'Spectralon'], value: Material.valToKey(0) });
 
-        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => {}, { value: 0 });
+        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => { }, { value: 0 });
 
         this.portCount = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Port Count', Parameter.DOWN, v => {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
@@ -80,7 +80,7 @@ class Model {
                     default:
                         console.error('invalid graph action');
                 }
-            }, { units: this.units, color: this.traceColor });
+            }, { units: this.units, color: this.traceColor, global: this.global });
 
         this.requirements = new Requirements(this.top, this.element, 20022, { container: 'model-requirements' }, (d) => {
             this.update();
@@ -111,10 +111,10 @@ class Model {
             this.update();
         });
 
-        this.global = _d && ('global' in _d) && _d.global;
-        this.graph.global.toggle(this.global);
+        this.global = _d && _d.global;
+        if (!this.global) this.graph.global.toggle();
 
-        $(window).on('resize', function() { this.update(); }.bind(this));
+        $(window).on('resize', function () { this.update(); }.bind(this));
 
         if (_d) {
             this.type = _d.type;
@@ -127,7 +127,8 @@ class Model {
             this.lampTable.update({
                 lamps: ['Empty', 'Empty'],
                 qty: [1, 1],
-                onQty: [0, 0]
+                onQty: [0, 0],
+                va: [1, 1]
             });
         }
 
@@ -146,6 +147,7 @@ class Model {
             lamps: x.lamps,
             qty: x.qty,
             onQty: x.onQty,
+            va: x.va,
         });
     }
 
@@ -157,6 +159,7 @@ class Model {
             lamps: this.lampTable.lamps,
             qty: this.lampTable.qty,
             onQty: this.lampTable.onQty,
+            va: this.lampTable.va,
             material: Material.keyToVal(this.material.val),
             portCount: this.portCount.val,
         }
@@ -186,11 +189,16 @@ class Model {
     }
 
     download() {
+        let radiance = 'Radiance (';
+        radiance += this.units.radiance == Radiance.MW_CM || this.units.radiance == Radiance.MW_M ? 'mW-' : 'W-';
+        radiance += this.units.radiance == Radiance.W_CM || this.units.radiance == Radiance.MW_CM ? 'cm2-' : 'm2-';
+        radiance += (this.units.wavelength == Length.NM ? 'nm' : 'um') + '-sr)';
         let rows = [
-            ['Wavelength (' + Length.valToKey(this.units.wavelength) + ')', 'Radiance (' + Radiance.valToKey(this.units.radiance) + '-' + (this.units.wavelength == Length.NM ? 'nm' : 'µm') + '-sr)', '', 'Specs', 'Lamps']
+            ['Wavelength (' + Length.valToKey(this.units.wavelength) + ')', radiance, '', 'Specs', 'Lamps', 'QTY', 'ON QTY', 'VA']
         ];
         let trace = this.trace;
         for (let i = 0; i < trace.x.length; i++) rows.push([trace.x[i], trace.y[i]]);
+
         rows[1].push('Port Diameter');
         rows[2].push('Sphere Diameter');
         rows[3].push('Material');
@@ -209,6 +217,9 @@ class Model {
         rows[7].push(Calculator.Math.FootLamberts(this.model, this.units));
         rows[8].push(Calculator.Math.Lux(this.model, this.units));
         for (let i = 1; i <= this.model.lamps.length; i++) rows[i].push(this.model.lamps[i - 1]);
+        for (let i = 1; i <= this.model.lamps.length; i++) rows[i].push(this.model.qty[i - 1]);
+        for (let i = 1; i <= this.model.lamps.length; i++) rows[i].push(this.model.onQty[i - 1]);
+        for (let i = 1; i <= this.model.lamps.length; i++) rows[i].push(this.model.va[i - 1]);
 
         IO.DownloadCSV(rows.map(e => e.join(',')).join('\n'), this.name.val);
     }

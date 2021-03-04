@@ -52,26 +52,26 @@ class IO {
         a.remove();
     }
 
-    static async LoadResources() {
+    static async LoadResources(_email, _password) {
         let promises = [];
-        await fetch('http://www.labspheretools.com/lamp?name=*', { method: 'GET' }).then(res => res.json().then(json => {
+        await fetch(`http://www.labspheretools.com/lamp?email=${_email}&password=${_password}&name=*`, { method: 'GET' }).then(res => res.json().then(json => {
             json.forEach(l => {
-                LampData[l.name.replaceAll('_', ' ')] = { portDiameter: l.port_diameter, vaa: l.vaa == 1, type: l.type, power: l.power, voltage: l.voltage };
+                LampData[l.name.replaceAll('_', ' ')] = { portDiameter: l.port_diameter, va: l.va == 1, type: l.type, power: l.power, voltage: l.voltage };
                 FluxData[l.name.replaceAll('_', ' ')] = l.flux;
             });
         }));
         return Promise.all(promises);
     }
     //Update Web Path
-    static async LoginUser(_username, _password) {
-        return fetch('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
+    static async LoginUser(_email, _password) {
+        return fetch(`http://www.labspheretools.com/user?email=${_email}&password=${_password}`, { method: 'GET' }).then(res => res.status == 200 ? res.json() : null);
     }
 
-    static async ClearUser(_username, _password) {
-        navigator.sendBeacon('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, '{}')
+    static async ClearUser(_email, _password) {
+        navigator.sendBeacon(`http://www.labspheretools.com/user?email=${_email}&password=${_password}`, '{}')
     }
 
-    static SaveUser(_username, _password, _json) {
-        navigator.sendBeacon('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, JSON.stringify(_json))
+    static SaveUser(_email, _password, _json) {
+        navigator.sendBeacon(`http://www.labspheretools.com/user?email=${_email}&password=${_password}`, JSON.stringify(_json))
     }
 }

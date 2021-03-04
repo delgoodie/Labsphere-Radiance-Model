@@ -1,12 +1,12 @@
 class Graph {
-    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d = {}) {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => { }, _d = {}) {
         this.top = _top;
         this.parent = _parent;
         this.classes = _classes;
         this.updateValue = _updateValue;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.element).attr('id', this.id);
         $(this.parent).append(this.element);
 
@@ -20,12 +20,12 @@ class Graph {
         this.download = new Button(this.top, this.element, 'file-download graph-button', Button.ACTION, () => this.updateValue('download'), { tooltip: 'Download' });
         this.load = new Button(this.top, this.element, 'file-upload graph-button', Button.ACTION, () => this.updateValue('model'), { tooltip: 'Load Custom Model' });
         this.reverse = new Button(this.top, this.element, 'calculator graph-button', Button.ACTION, () => this.updateValue('reverse'), { tooltip: 'Calculate Reverse Model' });
-        this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: false, tooltip: ['local', 'global'] });
+        this.global = new Button(this.top, this.element, 'globe graph-button', Button.TOGGLE, s => this.updateValue('global', s), { state: true, tooltip: ['local', 'global'] });
         this.colorPicker = CreateElement('input', this.element, 'graph-button graph-color');
         $(this.colorPicker).attr('type', 'color');
         $(this.colorPicker).val(_d.color ? _d.color : (this.top.darkMode.val ? '#f7941e' : '#1b75bc'));
 
-        $(this.colorPicker).on('change', function() { this.updateValue('color', $(this.colorPicker).val()); }.bind(this));
+        $(this.colorPicker).on('change', function () { this.updateValue('color', $(this.colorPicker).val()); }.bind(this));
 
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }

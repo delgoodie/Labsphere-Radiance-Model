@@ -1,5 +1,5 @@
 class CustomLoader extends Pane {
-    constructor(_top, _parent, _updateValue = () => {}, _d) {
+    constructor(_top, _parent, _updateValue = () => { }, _d) {
         super(_top, _parent, { title: 'cl-title' }, _updateValue, {
             width: '30vw',
             height: '50vh',
@@ -17,20 +17,21 @@ class CustomLoader extends Pane {
     }
 
     onCreate(_d) {
-        this.type = new Toggle(this.top, this.element, { container: 'cl-type-container', value: 'cl-param-value' }, 'Type', Parameter.DOWN, () => this.update(), { content: ['Measured', 'Modeled', 'Uploaded'], value: 'Modeled' });
+        this.type = new Dropdown(this.top, this.element, { container: 'cl-type-container', value: 'cl-param-value' }, 'Type', Parameter.DOWN, () => this.update(), { content: ['Measured', 'Modeled', 'Uploaded'], value: 'Modeled' });
         this.family = new Dropdown(this.top, this.element, { container: 'cl-param-container', value: 'cl-param-value' }, 'Family', Parameter.DOWN, () => this.update(), { content: ['A', 'D', 'L', 'S', 'V'], value: 'A' })
         this.sphereDiameter = new Dropdown(this.top, this.element, { container: 'cl-param-container', value: 'cl-param-value' }, 'Sphere Diameter', Parameter.DOWN, () => this.update(), { content: ['All', 8, 12, 20], value: 8 });
-        this.choice = new Dropdown(this.top, this.element, { container: 'cl-param-container', value: 'cl-param-value' }, 'Model', Parameter.DOWN, () => {}, { content: [], value: 'Select' });
+        this.choice = new Dropdown(this.top, this.element, { container: 'cl-param-container', value: 'cl-param-value' }, 'Model', Parameter.DOWN, () => { }, { content: [], value: 'Select' });
 
         this.trace = undefined;
-        this.units = new Units(this.top, this.element, 366, { container: 'cl-units' }, () => {});
+        this.units = new Units(this.top, this.element, 366, { container: 'cl-units' }, () => { });
 
         this.upload = CreateElement('input', this.element, 'cl-upload');
         $(this.upload).attr('type', 'file');
         $(this.upload).attr('accept', '.xlsx, .xls');
 
-        $(this.upload).on('change', function(e) {
+        $(this.upload).on('change', function (e) {
             IO.ParseExcel(e.target.files[0]).then((data) => {
+                console.log(data);
                 if (data.length < 2) return;
                 data[0].shift();
                 let name = data[1].shift();
@@ -38,6 +39,19 @@ class CustomLoader extends Pane {
                     x: data[0],
                     y: data[1],
                     name: name,
+                }
+                if (data.length == 8) {
+                    this.trace.portDiameter = data[3][1];
+                    this.trace.sphereDiameter = data[3][2];
+                    this.trace.material = data[3][3];
+                    this.trace.lamps = data[4];
+                    this.trace.lamps.unshift();
+                    this.trace.qty = data[5];
+                    this.trace.qty.unshift();
+                    this.trace.onQty = data[6];
+                    this.trace.onQty.unshift();
+                    this.trace.va = data[7];
+                    this.trace.va.unshift();
                 }
             });
         }.bind(this));

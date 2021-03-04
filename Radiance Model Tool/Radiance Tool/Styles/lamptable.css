@@ -143,3 +143,17 @@
     line-height: 5vh;
     float: right;
 }
+
+.lt-va {
+    margin: 0;
+    padding: 0 2%;
+}
+
+.lt-va-slider-handle {
+    background: black !important;
+    border-radius: 20%;
+}
+
+.lt-va-slider-range {
+    border: 1px solid black !important;
+}

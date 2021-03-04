@@ -13,13 +13,13 @@ var Manager = {
         Manager.head = $('.manager-head');
         Manager.body = $('.manager-body');
         Manager.projectHeader = CreateElement('div', Manager.head, 'manager-proj-title');
-        $(Manager.projectHeader).on('click', function () { $(Manager.projectFolder.element).slideDown(SLIDE_SPEED); }.bind(Manager));
+        $(Manager.projectHeader).on('click', function () { $(Manager.projectFolder.element).slideDown(SLIDE_SPEED); });
         CreateElement('i', Manager.projectHeader, 'fas fa-folder manager-proj-folder');
         Manager.projectTitle = CreateElement('span', Manager.projectHeader, '', '');
 
         let settings = CreateElement('div', Manager.head, 'manager-settings-container');
 
-        Manager.tools = new Button(Manager, settings, 'tools manager-settings-button', Button.ACTION, () => { }, { tooltip: 'tools' });
+        Manager.tools = new Button(Manager, settings, 'tools manager-settings-button', Button.ACTION, () => { }, { tooltip: 'Tools' });
 
         Manager.wipe = new Button(Manager, settings, 'trash manager-settings-button', Button.ACTION, () => {
             if (!confirm('Wipe all projects?')) return;
@@ -30,7 +30,7 @@ var Manager = {
         Manager.darkMode = new Button(Manager, settings, 'moon manager-settings-button', Button.TOGGLE, s => Manager.toggleDarkMode(s), { state: false, tooltip: ['Light Mode', 'Dark Mode'] });
 
         Manager.lampUpload = new LampUpload(Manager, document.body, l => {
-            let lampData = { "portDiameter": l.portDiameter, "vaa": l.vaa, "type": l.type, "power": l.power, "voltage": l.voltage };
+            let lampData = { "portDiameter": l.portDiameter, "va": l.va, "type": l.type, "power": l.power, "voltage": l.voltage };
             LampData[l.name] = lampData;
             FluxData[l.name] = l.flux;
             Manager.customLamps[l.name] = { lampData: lampData, fluxData: l.flux };
@@ -43,62 +43,92 @@ var Manager = {
 
         Manager.darkModeEvent = new CustomEvent('darkMode', { bubbles: false, detail: { state: false } });
 
+        Manager.news = new Pane(Manager, document.body, {}, () => { }, {
+            width: '40vw',
+            height: '85vh',
+            left: '30vw',
+            top: '5vh',
+            title: 'Updates',
+            select: 'Close',
+            draggable: false,
+            onCreate: (self) => {
+                $(self.link).attr('href', 'mailto:wdelgiudice@labsphere.com');
+                self.news = CreateElement('ul', self.element, 'manager-news');
+                NEWS.forEach(n => CreateElement('li', self.news, 'manager-news-li', n));
+                self.feedback = CreateElement('div', self.element, 'manager-user-create', 'For feedback and feature requests email ');
+                self.link = CreateElement('a', self.feedback, '', 'wdelgiudice@labsphere.com');
+                $(self.link).attr('href', 'mailto:wdelgiudice@labsphere.com');
+                $(self.element).hide();
+            },
+        });
+
+
         Manager.userPane = new Pane(Manager, document.body, {}, (email, password) => {
+            $('.splashscreen').slideDown(200);
             Manager.email = email;
             Manager.password = password;
             IO.LoginUser(Manager.email, Manager.password).then(json => {
-                if (json == null) {
-                    json = {};
-                } else if (json.error) {
+                if (json && json.error) {
                     console.log(json.error);
-                    $(Manager.userPane.element).show();
+                    $('.splashscreen').slideUp(300);
+                    window.setTimeout(() => $(Manager.userPane.element).show(), 400);
                     return;
-                }
-                else json = json.data;
-
-                Manager.tabList = document.createElement('ul');
-                $(Manager.tabList).attr('id', 'tab-list');
-                $(Manager.tabList).addClass('tab-bar');
-                $(Manager.head).append(Manager.tabList);
-
-                Manager.bigAdd = new Button(Manager, Manager.body, 'plus-square manager-big-add' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab(undefined, 'Model'));
-
-                Manager.projectFolder = new ProjectFolder(Manager, document.body, {}, (action, data, data2) => {
-                    if (action == 'open') Manager.OpenProject(data);
-                    else if (action == 'create') Manager.OpenProject(Manager.CreateProject());
-                    else if (action == 'upload') {
-                        Manager.projects[data.id] = data;
-                        Manager.OpenProject(data.id);
-                    } else if (action == 'delete') Manager.DeleteProject(data);
-                    else if (action == 'rename') {
-                        Manager.projects[data].name = data2;
-                        if (Manager.current == data) $(Manager.projectTitle).text(data2);
-                        Manager.projectFolder.update(Manager.projects);
-                    }
-                    Manager.projectFolder.update(Manager.projects);
-                });
-
-                Manager.projects = {};
-                Object.getOwnPropertyNames(json).forEach(name => {
-                    if (name != 'settings') Manager.projects[name] = json[name];
-                });
-
-                if (!json.settings) {
-                    Manager.darkMode.val = false;
-                    Manager.customLamps = {};
-                    Manager.current = -1;
-                    $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
                 } else {
-                    Manager.darkMode.val = json.settings.darkMode;
-                    Manager.customLamps = json.settings.customLamps;
-                    Object.getOwnPropertyNames(json.settings.customLamps).forEach(n => {
-                        LampData[n] = json.settings.customLamps[n].lampData;
-                        FluxData[n] = json.settings.customLamps[n].fluxData;
-                    });
-                    Manager.OpenProject(json.settings.activeProject);
-                }
+                    if (json === null) {
+                        json = {};
+                    }
+                    else json = json.data;
 
-                Manager.projectFolder.update(Manager.projects);
+                    console.log(json);
+
+                    IO.LoadResources(Manager.email, Manager.password).then(() => {
+                        Manager.tabList = document.createElement('ul');
+                        $(Manager.tabList).attr('id', 'tab-list');
+                        $(Manager.tabList).addClass('tab-bar');
+                        $(Manager.head).append(Manager.tabList);
+
+                        Manager.bigAdd = new Button(Manager, Manager.body, 'plus-square manager-big-add' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab());
+
+                        Manager.projectFolder = new ProjectFolder(Manager, document.body, {}, (action, data, data2) => {
+                            if (action == 'open') Manager.OpenProject(data);
+                            else if (action == 'create') Manager.OpenProject(Manager.CreateProject());
+                            else if (action == 'upload') {
+                                Manager.projects[data.id] = data;
+                                Manager.OpenProject(data.id);
+                            } else if (action == 'delete') Manager.DeleteProject(data);
+                            else if (action == 'rename') {
+                                Manager.projects[data].name = data2;
+                                if (Manager.current == data) $(Manager.projectTitle).text(data2);
+                                Manager.projectFolder.update(Manager.projects);
+                            }
+                            Manager.projectFolder.update(Manager.projects);
+                        });
+
+                        Manager.projects = {};
+                        Object.getOwnPropertyNames(json).forEach(name => {
+                            if (name != 'settings') Manager.projects[name] = json[name];
+                        });
+
+                        if (!json.settings) {
+                            Manager.darkMode.val = false;
+                            Manager.customLamps = {};
+                            Manager.current = -1;
+                            $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
+                        } else {
+                            Manager.darkMode.val = json.settings.darkMode;
+                            Manager.customLamps = json.settings.customLamps;
+                            Object.getOwnPropertyNames(json.settings.customLamps).forEach(n => {
+                                LampData[n] = json.settings.customLamps[n].lampData;
+                                FluxData[n] = json.settings.customLamps[n].fluxData;
+                            });
+                            Manager.OpenProject(json.settings.activeProject);
+                        }
+
+                        Manager.projectFolder.update(Manager.projects);
+                        $('.splashscreen').slideUp(500);
+                        $(Manager.news.element).slideDown(500);
+                    });
+                }
             });
         }, {
             width: '35vw',
@@ -107,6 +137,7 @@ var Manager = {
             top: '25vh',
             title: 'Account',
             select: 'Sign In',
+            disableDefaultOnClose: true,
             draggable: false,
             onCreate: (self) => {
                 self.create = CreateElement('div', self.element, 'manager-user-create', 'To create an account email ');
@@ -121,7 +152,6 @@ var Manager = {
         });
 
         $(Manager.userPane.element).show();
-        $('.splashscreen').slideUp(500);
     },
 
     get globalTraces() {
@@ -136,7 +166,7 @@ var Manager = {
         Manager.current = id;
         Manager.tab.forEach(t => $(t.element).remove());
         Manager.tab = [];
-        Manager.projects[id].tab.forEach(t => Manager.AddTab(t, 'Model'));
+        Manager.projects[id].tab.forEach(t => Manager.AddTab(t));
         $(Manager.projectTitle).text(Manager.projects[id].name);
         Manager.CreateTabList(Manager.projects[id].activeTab);
     },
@@ -180,10 +210,21 @@ var Manager = {
 
             new Button(Manager, li, 'times', Button.ACTION, () => Manager.RemoveTab(t.id));
 
-            $(li).on('click', function () {
+            $(li).on('click', function (e) {
                 Manager.CreateTabList(t.id);
                 t.update();
-            }.bind(Manager));
+            });
+
+            $(li).on('contextmenu', function (e) {
+                e.preventDefault();
+                let dup = t.save();
+                dup.id = 0
+                while (dup.id == 0) {
+                    dup.id = Math.round(Math.random() * 100000 + 1);
+                    Manager.tab.forEach(t => { if (t.id == dup.id) dup.id = 0; });
+                }
+                Manager.AddTab(dup);
+            });
 
             if (t.id == (id !== undefined && id != 0 ? id : Manager.tab[Manager.tab.length - 1].id)) {
                 $(t.element).show();
@@ -200,26 +241,23 @@ var Manager = {
         });
 
 
-        new Button(Manager, Manager.tabList, 'plus-square' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab(undefined, 'Model'));
+        new Button(Manager, Manager.tabList, 'plus-square' + (Manager.darkMode.val ? ' dark1' : ''), Button.ACTION, () => Manager.AddTab());
 
         if (Manager.tab.length != 0) $(Manager.bigAdd.element).hide();
         else $(Manager.bigAdd.element).show();
     },
 
-    AddTab(d, type) {
+    AddTab(d) {
         if (d === undefined || d === null) {
             let id = 0;
             while (id == 0) {
                 id = Math.round(Math.random() * 100000 + 1);
                 Manager.tab.forEach(t => { if (t.id == id) id = 0; });
             }
-            if (type == 'Model') Manager.tab.push(new Model(Manager, Manager.body, id, { container: 'tab-content' }));
-            else return;
-            Manager.CreateTabList();
-        } else {
-            if (d.tabType == 'Model') Manager.tab.push(new Model(Manager, Manager.body, d.id, { container: 'tab-content' }, d));
-            else return;
-        }
+            Manager.CreateTabList(Manager.tab.push(new Model(Manager, Manager.body, id, { container: 'tab-content' })).id);
+
+        } else Manager.CreateTabList(Manager.tab.push(new Model(Manager, Manager.body, d.id, { container: 'tab-content' }, d)).id);
+        return Manager.tab[Manager.tab.length - 1];
     },
 
     RemoveTab(id) {

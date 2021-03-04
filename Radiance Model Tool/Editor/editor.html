@@ -5,8 +5,8 @@
 
 <head>
     <script>
-        async function CreateUser(_username, _password) {
-            return fetch('http://www.labspheretools.com/user?email=' + _username + '&password=' + _password, { method: 'PUT' }).then(() => IO.LoginUser(_username, _password));
+        async function CreateUser(_email, _password) {
+            return fetch('http://www.labspheretools.com/user?email=' + _email + '&password=' + _password, { method: 'PUT' }).then(() => IO.LoginUser(_email, _password));
         }
     </script>
 </head>

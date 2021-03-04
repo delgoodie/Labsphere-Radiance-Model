@@ -244,7 +244,7 @@ var Calculator = {
         SpectralRadiance(w, mdl, units) { //inches
             let i = Math.round((w - (units.wavelength == Length.NM ? 250 : .25)) * (units.wavelength == Length.NM ? 1 : 1000));
             let ref = Calculator.Model.Reflectance(w, mdl, units);
-            let lampSum = mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0);
+            let lampSum = mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index] * mdl.va[index], 0);
 
             let wFraction = Calculator.Model.WallFraction(mdl, units);
 
@@ -584,7 +584,7 @@ var Calculator = {
         },
 
         Lumens(mdl, units) {
-            return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
+            return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[j] * mdl.va[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
         },
 
         FootLamberts(mdl, units) {
@@ -688,7 +688,7 @@ var Calculator = {
                 name: mdl.name,
                 x: wav,
                 y: wav.map((_, i) => {
-                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index], 0) /* + blackbody flux */)) / (piSA * (1 - ref[i] * wF));
+                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index] * mdl.va[index], 0) /* + blackbody flux */)) / (piSA * (1 - ref[i] * wF));
                     return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
                 }),
                 units: units,
