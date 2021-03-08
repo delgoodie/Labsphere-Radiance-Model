@@ -161,7 +161,7 @@ var Manager = {
     },
 
     OpenProject(id) {
-        if (id === undefined) return;
+        if (id === undefined || id == -1) return;
         if (Manager.current != -1) Manager.LocalSave();
         Manager.current = id;
         Manager.tab.forEach(t => $(t.element).remove());
