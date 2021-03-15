@@ -2,13 +2,11 @@
     "short_name": "Web Radiance App",
     "name": "Labsphere Web Radiance App",
     "description": "Labsphere web tool that predicts sphere models",
-    "icons": [
-        {
-            "src": "http://www.labspheretools.com/resource/sphere",
-            "type": "image/png",
-            "sizes": "144x144"
-        }
-    ],
+    "icons": [{
+        "src": "Resources/sphere.png",
+        "type": "image/png",
+        "sizes": "144x144"
+    }],
     "start_url": "/index.html",
     "background_color": "#1B75BC",
     "display": "fullscreen",

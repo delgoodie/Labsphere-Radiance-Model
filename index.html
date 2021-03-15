@@ -4,9 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <head>
-    <!--Update Web Path-->
-
-    <!--        <link rel='icon' type='image/png' sizes='144x144' href='Resources/Images/favicon.png'> <link rel='manifest' href='http://www.labspheretools.com/manifest.webmanifest'>-->
+    <link rel='icon' type='image/png' sizes='144x144' href='Resources/Images/favicon.png'>
+    <link rel='manifest' href='/manifest.webmanifest'>
     <title>Web Radiance Model</title>
 
     <!--CDNs-->
@@ -36,22 +35,13 @@
     <link rel='stylesheet' href='Styles/pane.css'>
     <link rel='stylesheet' href='Styles/projectfolder.css'>
 
-    <!--Data-->
-    <script src='Resources/Data/CCTbarData.js'></script>
-    <script src='Resources/Data/MeasuredData.js'></script>
-    <script src='Resources/Data/CCTData.js'></script>
-    <script src='Resources/Data/InternalBlackbodyData.js'></script>
-    <script src='Resources/Data/ReflectanceData.js'></script>
-    <script src='Resources/Data/VLambdaData.js'></script>
-    <script src='Resources/Data/WavelengthData.js'></script>
-    <script src='Resources/Data/CCTColorData.js'></script>
-
     <!--References-->
     <script src='Scripts/References/Constants.js'></script>
     <script src='Scripts/References/Calculator.js'></script>
     <script src='Scripts/References/IO.js'></script>
 
-    <script src='Resources/Data/HeliosModelData.js'></script>
+    <!--Data-->
+    <script src='Scripts/Data.js'></script>
 
     <!--UI-->
     <script src='Scripts/UI/Pane.js'></script>
@@ -78,14 +68,13 @@
     <script src='Scripts/Manager.js'></script>
 
     <!--entry point-->
-    <script src='Scripts/main.js'></script>
+    <script src='Scripts/Main.js'></script>
 </head>
 
 <body>
     <div class='manager-head'>
         <!--Update Web Path-->
-        <div class='manager-logo' onclick='window.location.reload();'><img
-                src='http://www.labspheretools.com/resource/logo' class='manager-logo-image'><span>Web Radiance
+        <div class='manager-logo' onclick='window.location.reload();'><img src='/Resources/logo.jpg' class='manager-logo-image'><span>Web Radiance
                 App</span></div>
     </div>
     <div class='manager-body'></div>

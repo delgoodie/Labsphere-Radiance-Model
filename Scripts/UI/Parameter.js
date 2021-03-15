@@ -152,6 +152,8 @@ class Dropdown extends Parameter {
             $(div).text(e);
             $(this.dropcontent).append(div);
         });
+        $(this.dropcontent).toggleClass('param-dropdown-long', content.length > 7);
+
     }
 }
 

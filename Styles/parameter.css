@@ -126,3 +126,14 @@
     white-space: nowrap;
     cursor: pointer;
 }
+
+.param-dropdown-long {
+    overflow-y: scroll;
+    height: 35vh;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.param-dropdown-long::-webkit-scrollbar {
+    display: none;
+}

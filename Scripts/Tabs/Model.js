@@ -9,7 +9,7 @@ class Model {
         this.traceColor = _d ? _d.traceColor : (this.top.darkMode.val ? '#f7941e' : '#1b75bc');
         this.element = document.createElement('div');
 
-        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
 
         $(this.element).attr('id', this.id);
         $(this.element).addClass('model-container');
@@ -29,7 +29,7 @@ class Model {
             this.update();
         }, { value: 2 });
 
-        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => { }, { value: '0%' });
+        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => {}, { value: '0%' });
 
         this.sphereDiameter = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Sphere Diameter', Parameter.DOWN, (sD) => {
             this.portCount.val = Calculator.Model.GetNumPorts(sD);
@@ -37,14 +37,14 @@ class Model {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: [6, 8, 12, 20, 30, 40, 65, 76], value: 8 });
 
-        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => { }, { value: '0W' });
+        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => {}, { value: '0W' });
 
         this.material = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Material', Parameter.DOWN, () => {
             this.update();
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: ['Spectraflect', 'Permaflect', 'Gold', 'Spectralon'], value: Material.valToKey(0) });
 
-        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => { }, { value: 0 });
+        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => {}, { value: 0 });
 
         this.portCount = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Port Count', Parameter.DOWN, v => {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
@@ -96,14 +96,11 @@ class Model {
 
         this.output = new Output(this.top, this.element, 2834, { container: 'model-output-container' }, () => this.update());
 
-        this.customLoad = new CustomLoader(this.top, this.element, (model, specs) => {
-            if ('x' in model && specs) {
-                this.type = 'Measured Model';
-                this.fixedTrace = model;
-                this.model = specs;
-            } else if ('x' in model) {
-                this.type = 'Excel Model'
-                this.fixedTrace = model;
+        this.customLoad = new CustomLoader(this.top, this.element, (model) => {
+            if ('x' in model) {
+                this.type = 'Fixed Model';
+                this.fixedTrace = { x: model.x, y: model.y, units: model.units };
+                this.model = model;
             } else {
                 this.type = 'Helios Model';
                 this.model = model;
@@ -114,7 +111,7 @@ class Model {
         this.global = _d && _d.global;
         if (!this.global) this.graph.global.toggle();
 
-        $(window).on('resize', function () { this.update(); }.bind(this));
+        $(window).on('resize', function() { this.update(); }.bind(this));
 
         if (_d) {
             this.type = _d.type;
@@ -137,17 +134,17 @@ class Model {
         this.top.toggleDarkMode(this.top.darkMode.val);
     }
 
-    set model(x) {
-        this.name.val = x.name;
-        this.portDiameter.val = x.portDiameter;
-        this.sphereDiameter.val = x.sphereDiameter;
-        this.material.val = Material.valToKey(x.material);
-        this.portCount.val = x.portCount;
+    set model(mdl) {
+        this.name.val = mdl.name || 'Untitled';
+        this.portDiameter.val = mdl.portDiameter || 0;
+        this.sphereDiameter.val = mdl.sphereDiameter || 0;
+        this.material.val = mdl.material ? Material.valToKey(mdl.material) : 'Spectraflect';
+        this.portCount.val = mdl.portCount || 0;
         this.lampTable.update({
-            lamps: x.lamps,
-            qty: x.qty,
-            onQty: x.onQty,
-            va: x.va,
+            lamps: mdl.lamps || [],
+            qty: mdl.qty || [],
+            onQty: mdl.onQty || [],
+            va: mdl.va || [],
         });
     }
 
@@ -166,7 +163,7 @@ class Model {
     }
 
     get trace() {
-        if (this.type != 'Measured Model' && this.type != 'Excel Model') {
+        if (this.type != 'Fixed Model') {
             let modelTrace = Calculator.Trace.Model(this.model, this.units);
             modelTrace.id = this.id;
             modelTrace.color = this.traceColor; // this.top.darkMode.val ? 'rgba(247, 148, 30, 1)' : 'rgba(27, 117, 188, 1)';
@@ -225,7 +222,7 @@ class Model {
     }
 
     update() {
-        this.lampTable.editable = this.type != 'Measured Model' && this.type != 'Excel Model';
+        this.lampTable.editable = this.type != 'Fixed Model';
         this.lampTable.update(this.portCount.val);
 
         let trace = this.trace;

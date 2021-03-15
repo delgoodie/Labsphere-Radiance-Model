@@ -6,7 +6,7 @@ class Visual {
         this.classes = _classes;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.element).attr('id', this.id);
         $(this.element).addClass('visual-container');
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
@@ -36,7 +36,7 @@ class Visual {
         $(this.canvas).css('margin-left', (width - height) * .5);
 
         //Update Web Path
-        $(this.sphere).attr('src', 'http://www.labspheretools.com/resource/sphere-' + mdl.sphereDiameter);
+        $(this.sphere).attr('src', 'Resources/sphere-' + mdl.sphereDiameter + '.png');
 
         let radius = 0;
         let scale = height * 0.04560252836;
