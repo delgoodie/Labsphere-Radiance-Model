@@ -84,7 +84,6 @@ var Manager = {
             Manager.darkMode.val = false;
             Manager.customLamps = {};
             Manager.activeProject = -1;
-            $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
         }
 
         Manager.projectFolder = new ProjectFolder(Manager, document.body, {}, (action, data, data2) => {
@@ -101,8 +100,10 @@ var Manager = {
             }
             Manager.projectFolder.update(Manager.projects);
         });
+
         Manager.projectFolder.update(Manager.projects);
         Manager.OpenProject(Manager.activeProject);
+        if (!json || Object.keys(json) == 0) $(Manager.projectFolder.element).slideDown(SLIDE_SPEED);
     },
 
     get globalTraces() {
