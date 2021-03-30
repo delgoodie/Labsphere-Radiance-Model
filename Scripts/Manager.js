@@ -257,4 +257,4 @@ var Manager = {
         Manager.CreateTabList();
         $('#feedback-link').toggleClass('feedback-dark', s);
     },
-}
+};

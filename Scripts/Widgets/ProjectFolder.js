@@ -110,6 +110,7 @@ class ProjectFolder extends Pane {
         }
         this.toggleDarkMode(this.top.darkMode.val);
     }
+
     toggleDarkMode(s) {
         $(this.projectList).toggleClass('dark1', s);
         $(this.droppable).toggleClass('proj-droppable-dark', s);
