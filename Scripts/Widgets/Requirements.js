@@ -1,5 +1,5 @@
 class Requirements {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}, _d = {}) {
+    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => { }, _d = {}) {
         this.top = _top;
         this.parent = _parent;
         this.id = _id;
@@ -14,7 +14,7 @@ class Requirements {
         this.specralPos = null;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.parent).append(this.element);
         $(this.element).attr('id', this.id);
         $(this.element).addClass('req-container');
@@ -63,7 +63,7 @@ class Requirements {
             this.inbandTable.update({ 'Wavelength A': wA, 'Wavelength B': wB, 'Required': req, 'Predicted': pred });
         }
 
-        $(inbandDelete).on('click', function(e) {
+        $(inbandDelete).on('click', function (e) {
             e.stopPropagation();
             this.inbandTable.clear();
             this.bands = [];
@@ -110,7 +110,7 @@ class Requirements {
                 self.lowerSpectral = Calculator.Trace.Empty();
                 self.upperSpectral = Calculator.Trace.Empty();
 
-                self.units = new Units(self.top, self.element, 23423, { container: 'req-upload-units' }, () => {});
+                self.units = new Units(self.top, self.element, 23423, { container: 'req-upload-units' }, () => { });
 
                 self.upload = document.createElement('input');
                 $(self.upload).attr('type', 'file');
@@ -118,7 +118,7 @@ class Requirements {
                 $(self.upload).addClass('req-upload');
                 $(self.element).append(self.upload);
 
-                $(self.upload).on('change', function(e) {
+                $(self.upload).on('change', function (e) {
                     IO.ParseExcel(e.target.files[0]).then(data => {
                         if (data.length < 2) return;
                         data[0].shift();
@@ -168,7 +168,7 @@ class Requirements {
             }
         });
 
-        $(spectralDelete).on('click', function(e) {
+        $(spectralDelete).on('click', function (e) {
             e.stopPropagation();
             this.lowerSpectral.x = [];
             this.lowerSpectral.y = [];
@@ -176,14 +176,14 @@ class Requirements {
             this.upperSpectral.y = [];
             this.updateValue();
         }.bind(this));
-        $(spectralUpload).on('click', function(e) {
+        $(spectralUpload).on('click', function (e) {
             e.stopPropagation();
             $(this.upload.element).slideToggle(SLIDE_SPEED);
         }.bind(this));
         //#endregion
 
         //#region TAB MANAGMENT
-        $(inbandHeader).on('click', function() {
+        $(inbandHeader).on('click', function () {
             $(inbandContainer).show();
             $(irradianceContainer).hide();
             $(spectralContainer).hide();
@@ -195,7 +195,7 @@ class Requirements {
             $(spectralHeader).css('border-bottom', '1px solid black');
         }.bind(this));
 
-        $(irradianceHeader).on('click', function() {
+        $(irradianceHeader).on('click', function () {
             $(irradianceContainer).show();
             $(inbandContainer).hide();
             $(spectralContainer).hide();
@@ -207,7 +207,7 @@ class Requirements {
             $(spectralHeader).css('border-bottom', '1px solid black');
         }.bind(this));
 
-        $(spectralHeader).on('click', function() {
+        $(spectralHeader).on('click', function () {
             $(spectralContainer).show();
             $(inbandContainer).hide();
             $(irradianceContainer).hide();
@@ -228,10 +228,12 @@ class Requirements {
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }
 
+    // gets requirements traces
     get traces() {
         return [Calculator.Trace.Interpolate(this.lowerSpectral), Calculator.Trace.Interpolate(this.upperSpectral), ...this.bands];
     }
 
+    // populates req forms with data
     load(d) {
         if ('upperSpectral' in d) this.upperSpectral = d.upperSpectral;
         if ('lowerSpectral' in d) this.lowerSpectral = d.lowerSpectral;
@@ -282,6 +284,7 @@ class Requirements {
         this.specralPos = null;
     }
 
+    // converts inband radiance table to bands objects
     tableToBands(values) {
         return values['Wavelength A'].map((v, i) => ({
             name: '',

@@ -9,7 +9,7 @@ class Model {
         this.traceColor = _d ? _d.traceColor : (this.top.darkMode.val ? '#f7941e' : '#1b75bc');
         this.element = document.createElement('div');
 
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
 
         $(this.element).attr('id', this.id);
         $(this.element).addClass('model-container');
@@ -29,7 +29,7 @@ class Model {
             this.update();
         }, { value: 2 });
 
-        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => {}, { value: '0%' });
+        this.portFraction = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Fraction', Parameter.DOWN, () => { }, { value: '0%' });
 
         this.sphereDiameter = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Sphere Diameter', Parameter.DOWN, (sD) => {
             this.portCount.val = Calculator.Model.GetNumPorts(sD);
@@ -37,14 +37,14 @@ class Model {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: [6, 8, 12, 20, 30, 40, 65, 76], value: 8 });
 
-        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => {}, { value: '0W' });
+        this.totalPower = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Total Power', Parameter.DOWN, () => { }, { value: '0W' });
 
         this.material = new Dropdown(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', dropfield: 'model-specs-parameter-field' }, 'Material', Parameter.DOWN, () => {
             this.update();
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
         }, { content: ['Spectraflect', 'Permaflect', 'Gold', 'Spectralon'], value: Material.valToKey(0) });
 
-        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => {}, { value: 0 });
+        this.portRatio = new Parameter(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field' }, 'Port Ratio', Parameter.DOWN, () => { }, { value: 0 });
 
         this.portCount = new Input(this.top, this.specs, { container: 'model-specs-parameter', field: 'model-specs-parameter-field', model: 'model-specs-parameter-field' }, 'Port Count', Parameter.DOWN, v => {
             if (this.type == 'Helios Model') this.type = 'Helios Model - Modified';
@@ -111,7 +111,7 @@ class Model {
         this.global = _d && _d.global;
         if (!this.global) this.graph.global.toggle();
 
-        $(window).on('resize', function() { this.update(); }.bind(this));
+        $(window).on('resize', function () { this.update(); }.bind(this));
 
         if (_d) {
             this.type = _d.type;
@@ -134,6 +134,10 @@ class Model {
         this.top.toggleDarkMode(this.top.darkMode.val);
     }
 
+    /**
+     * Set model data 
+     * material must be string
+     */
     set model(mdl) {
         this.name.val = mdl.name || 'Untitled';
         this.portDiameter.val = mdl.portDiameter || 0;
@@ -148,6 +152,9 @@ class Model {
         });
     }
 
+    /**
+     * creates model object from parameters
+     */
     get model() {
         return {
             name: this.name.val,
@@ -161,7 +168,9 @@ class Model {
             portCount: this.portCount.val,
         }
     }
-
+    /**
+     * creates trace object from model
+     */
     get trace() {
         if (this.type != 'Fixed Model') {
             let modelTrace = Calculator.Trace.Model(this.model, this.units);
@@ -175,7 +184,9 @@ class Model {
             return fixedTrace;
         }
     }
-
+    /**
+     * invokes reverse model calculation and updates model
+     */
     reverse() {
         let model = Calculator.Model.SpectralReverse(this.model, Calculator.Trace.Convert(this.requirements.lowerSpectral, this.units), Calculator.Trace.Convert(this.requirements.upperSpectral, this.units), this.units);
         if (model) {
@@ -184,7 +195,9 @@ class Model {
             this.update();
         }
     }
-
+    /**
+     * invokes IO.csvDownload and compiles model data
+     */
     download() {
         let radiance = 'Radiance (';
         radiance += this.units.radiance == Radiance.MW_CM || this.units.radiance == Radiance.MW_M ? 'mW-' : 'W-';
@@ -221,6 +234,9 @@ class Model {
         IO.DownloadCSV(rows.map(e => e.join(',')).join('\n'), this.name.val);
     }
 
+    /**
+     * updates all data and widgets
+     */
     update() {
         this.lampTable.editable = this.type != 'Fixed Model';
         this.lampTable.update(this.portCount.val);
@@ -251,6 +267,9 @@ class Model {
         this.visual.update(model, this.units);
     }
 
+    /**
+     * creates object summary of model
+     */
     save() {
         return {
             id: this.id,
@@ -265,6 +284,9 @@ class Model {
         }
     }
 
+    /**
+     * toggles dark mode given state (s)
+     */
     toggleDarkMode(s) {
         $(this.specs).toggleClass('dark1', s);
         $(this.requirements.element).toggleClass('dark1', s);

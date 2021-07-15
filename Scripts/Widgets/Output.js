@@ -1,5 +1,6 @@
+// bottom right corner widget
 class Output {
-    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => {}) {
+    constructor(_top, _parent, _id = -1, _classes = {}, _updateValue = () => { }) {
         this.top = _top;
         this.parent = _parent;
         this.id = _id;
@@ -7,7 +8,7 @@ class Output {
         this.updateValue = _updateValue;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.element).attr('id', this.id);
         $(this.element).addClass('output-container');
         $(this.parent).append(this.element);

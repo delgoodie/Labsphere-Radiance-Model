@@ -1,5 +1,5 @@
 class ProjectFolder extends Pane {
-    constructor(_top, _parent, _classes = {}, _updateValue = () => {}, _d = { projects: {} }) {
+    constructor(_top, _parent, _classes = {}, _updateValue = () => { }, _d = { projects: {} }) {
         super(_top, _parent, _classes, _updateValue, {
             width: '30vw',
             height: '50vh',
@@ -18,25 +18,26 @@ class ProjectFolder extends Pane {
         if ('container' in this.classes) $(this.element).addClass(this.classes.container);
     }
 
+    // overriding base class method
     onCreate(_d) {
         this.projectList = document.createElement('div');
         $(this.projectList).addClass('proj-list');
         $(this.element).append(this.projectList);
 
-        $(this.projectList).on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+        $(this.projectList).on('drag dragstart dragend dragover dragenter dragleave drop', function (e) {
             e.preventDefault();
             e.stopPropagation();
         }.bind(this));
 
-        $(this.projectList).on('dragover dragenter', function(e) {
+        $(this.projectList).on('dragover dragenter', function (e) {
             if (e.target == this.projectList) $(this.projectList).addClass(this.top.darkMode.val ? 'proj-droppable proj-droppable-dark' : 'proj-droppable');
         }.bind(this));
 
-        $(this.projectList).on('dragleave dragend drop', function(e) {
+        $(this.projectList).on('dragleave dragend drop', function (e) {
             if (e.target == this.projectList) $(this.projectList).removeClass(this.top.darkMode.val ? 'proj-droppable proj-droppable-dark' : 'proj-droppable');
         }.bind(this));
 
-        this.projectList.addEventListener('drop', function(e) {
+        this.projectList.addEventListener('drop', function (e) {
             e.preventDefault();
             IO.ParseJSON(e.dataTransfer.files[0]).then(data => this.updateValue('upload', data));
         }.bind(this));
@@ -46,7 +47,7 @@ class ProjectFolder extends Pane {
         $(add).text('Create Project');
         $(this.element).append(add);
 
-        $(add).on('click', function() {
+        $(add).on('click', function () {
             this.updateValue('create');
             let projs = $(this.projectList).children();
             for (let i = projs.length - 1; i >= 0; i--) {
@@ -64,13 +65,13 @@ class ProjectFolder extends Pane {
         $(this.element).append(upload);
 
 
-        $(upload).on('click', function(e) {
+        $(upload).on('click', function (e) {
             e.preventDefault();
             let input = document.createElement('input');
             $(input).attr('type', 'file');
             $(input).attr('accept', '.json');
             $(document.body).append(input);
-            $(input).on('change', function(e) {
+            $(input).on('change', function (e) {
                 e.preventDefault();
                 IO.ParseJSON(e.target.files[0]).then(data => this.updateValue('upload', data));
                 $(input).remove();
@@ -80,10 +81,12 @@ class ProjectFolder extends Pane {
         }.bind(this));
     }
 
+    // overriding base class method
     onClose() {
         if ($(this.projectList).children().length != 0) $(this.element).slideUp(SLIDE_SPEED);
     }
 
+    // updates ui according to projects list
     update(projects) {
         $(this.projectList).empty();
         for (let proj in projects) {
@@ -100,17 +103,18 @@ class ProjectFolder extends Pane {
 
             new Button(this.top, p, 'file-download proj-icon', Button.ACTION, () => IO.DownloadJSON(projects[proj], projects[proj].name), {});
 
-            $(p).on('click', function() {
+            $(p).on('click', function () {
                 this.updateValue('open', proj);
                 $(this.element).slideUp(SLIDE_SPEED);
             }.bind(this));
 
-            $(input).on('click', function(e) { e.stopPropagation(); }.bind(this));
-            $(input).on('change', function() { this.updateValue('rename', proj, $(input).val()); }.bind(this));
+            $(input).on('click', function (e) { e.stopPropagation(); }.bind(this));
+            $(input).on('change', function () { this.updateValue('rename', proj, $(input).val()); }.bind(this));
         }
         this.toggleDarkMode(this.top.darkMode.val);
     }
 
+    // overriding base class method
     toggleDarkMode(s) {
         $(this.projectList).toggleClass('dark1', s);
         $(this.droppable).toggleClass('proj-droppable-dark', s);

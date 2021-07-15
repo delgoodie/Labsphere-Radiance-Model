@@ -1,5 +1,5 @@
 class LampTable {
-    constructor(_top, _parent, _classes = {}, _editable, _grayMode, _updateValue = () => {}) {
+    constructor(_top, _parent, _classes = {}, _editable, _grayMode, _updateValue = () => { }) {
         this.top = _top;
         this.parent = _parent;
         this.classes = _classes;
@@ -13,7 +13,7 @@ class LampTable {
         this.portCount = 0;
 
         this.element = document.createElement('div');
-        $(document.body).on('darkMode', function(e) { this.toggleDarkMode(e.detail.state); }.bind(this));
+        $(document.body).on('darkMode', function (e) { this.toggleDarkMode(e.detail.state); }.bind(this));
         $(this.element).attr('id', this.id);
         $(this.element).addClass('lt-container');
 
@@ -34,7 +34,7 @@ class LampTable {
 
     update(d) {
         this.lampSelector.update();
-        if (typeof(d) == 'object') {
+        if (typeof (d) == 'object') {
             this.lamps = d.lamps;
             this.qty = d.qty;
             this.onQty = d.onQty;
@@ -122,17 +122,17 @@ class LampTable {
                 $(onQty).val(this.onQty[i]);
                 $(td[2]).addClass('lt-qty');
                 $(td[2]).append(onQty);
-                $(qty).on('change', function() {
+                $(qty).on('change', function () {
                     if ($(qty).val() * 1 >= 0 && $(qty).val() * 1 != NaN) this.qty[i] = Math.min($(qty).val() * 1, this.portCount - this.qty.reduce((s, q) => s + q, 0) + this.qty[i]);
                     this.updateValue();
                 }.bind(this));
-                $(onQty).on('change', function() {
+                $(onQty).on('change', function () {
                     if ($(onQty).val() * 1 >= 0 && $(onQty).val() * 1 != NaN) this.onQty[i] = Math.min($(onQty).val() * 1, this.qty[i]);
                     this.updateValue();
                 }.bind(this));
 
                 if (this.editable) {
-                    $(td[0]).on('click', function() {
+                    $(td[0]).on('click', function () {
                         $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
@@ -149,11 +149,11 @@ class LampTable {
                 CreateElement('i', td[2], 'lt-status-toggle ' + (this.onQty[i] == 1 ? 'fas fa-toggle-on' : 'fas fa-toggle-off'));
 
                 if (this.editable) {
-                    $(td[1]).on('click', function() {
+                    $(td[1]).on('click', function () {
                         $(this.lampSelector.element).slideDown(SLIDE_SPEED);
                         this.selectedPort = i;
                     }.bind(this));
-                    $(td[2]).on('click', function() {
+                    $(td[2]).on('click', function () {
                         this.onQty[i] = ($(td[2]).hasClass('lt-status-off') ? 1 : 0);
                         this.updateValue();
                     }.bind(this));
@@ -172,7 +172,7 @@ class LampTable {
                     max: 1,
                     value: this.va[i],
                     step: .01,
-                    stop: function() {
+                    stop: function () {
                         self.va[i] = $(this).slider('value');
                         self.updateValue();
                     },
@@ -190,7 +190,7 @@ class LampTable {
             let tr = CreateElement('tr', this.table, 'lt-row');
             let add = CreateElement('td', tr, 'fas fa-plus lt-add-button');
             if (this.top.darkMode.val) $(add).addClass('dark3');
-            $(add).on('click', function() {
+            $(add).on('click', function () {
                 this.lamps.push('Empty');
                 this.qty.push(0);
                 this.onQty.push(0);
@@ -202,7 +202,7 @@ class LampTable {
             let remove = CreateElement('td', tr, 'fas fa-minus lt-remove-button');
             if (this.top.darkMode.val) $(remove).css('color', 'black');
             $(tr).append(remove);
-            $(remove).on('click', function() {
+            $(remove).on('click', function () {
                 this.lamps.pop();
                 this.qty.pop();
                 this.onQty.pop();
@@ -215,6 +215,7 @@ class LampTable {
         //$(this.table).toggleClass('lt-use-qty', useQty);
     }
 
+    // makes lamp table read only (for uploaded plots that are not model driven)
     set gray(s) {
         $(this.element).toggleClass('lt-container-gray', s);
         this.grayMode = s;

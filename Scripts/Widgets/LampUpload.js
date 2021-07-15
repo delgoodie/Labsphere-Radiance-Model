@@ -13,6 +13,7 @@ class LampUpload extends Pane {
         });
         this.flux = [];
     }
+    // overriding base class method
     onCreate(_d) {
         this.name = new Input(this.top, this.element, { container: 'lu-param-wide' }, 'Name', Parameter.DOWN, () => { });
 
@@ -39,6 +40,7 @@ class LampUpload extends Pane {
         });
     }
 
+    // overriding base class method
     onSelect() {
         this.updateValue({ name: this.name.val, portDiameter: this.portDiameter.val, va: this.va.val, type: this.type.val, power: this.power.val, voltage: this.voltage.val, flux: this.flux });
     }

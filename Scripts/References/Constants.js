@@ -1,5 +1,7 @@
+// number of sig figs used in calculation
 const sigFigs = 10;
 
+// Radiance Units Enum
 const Radiance = {
     W_CM: 32,
     MW_CM: 24,
@@ -8,7 +10,7 @@ const Radiance = {
     valToKey(val) {
         switch (val) {
             case this.W_CM:
-                return 'W/cm' + String.fromCharCode(parseInt('00B2', 16));
+                return 'W/cm' + String.fromCharCode(parseInt('00B2', 16)); // sqr symbol
             case this.MW_CM:
                 return 'mW/cm' + String.fromCharCode(parseInt('00B2', 16));
             case this.W_M:
@@ -34,7 +36,9 @@ const Radiance = {
         }
     }
 };
-
+/**
+ *  Length units enum
+ */
 const Length = {
     IN: 265,
     CM: 108,

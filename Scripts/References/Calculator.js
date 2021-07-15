@@ -1,11 +1,17 @@
 var Calculator = {
     Units: {
+        /**
+         * the default units of any parameter
+         */
         Default: {
             length: Length.IN,
             wavelength: Length.NM,
             radiance: Radiance.W_CM,
         },
-        Convert(val, giv, des) { //Value, given units, desired units --- returns value in desired units
+        /**
+         * converts a value from the given units to the desired units
+         */
+        Convert(val, giv, des) {
             let final = 0;
             switch (giv) {
                 case Radiance.W_CM:
@@ -190,6 +196,9 @@ var Calculator = {
     },
 
     Model: {
+        /**
+         * calculates Blackbody number
+         */
         Blackbody(i, blackbody_ON, designed_EB_Power, applied_EB_Temp, designed_EB_Temp) {
             if (blackbody_ON) {
                 let y = .25; //wavelength(i);
@@ -200,19 +209,30 @@ var Calculator = {
                 return ((applied_EB_Power / totalPower) * numeratorConstnants) / (Math.pow(y, 5) * Math.pow(Math.E, eExponent) - 1);
             } else return 0;
         },
-
+        /**
+         * internmediate blackbody calculation
+         */
         ExternalBlackbodyFlux(i, bbData) {
             return Calculator.Model.Blackbody(i, bbData.blackbody_ON, bbData.designed_EB_Power, bbData.applied_EB_Temp, bbData.designed_EB_Temp) * bbData.blackbodyNumber;
         },
 
+        /**
+         * internmediate blackbody calculation
+         */
         InternalBlackbodyFlux(i, bbData) {
             return Calculator.Model.Blackbody(i, bbData.blackbody_QTH_ON, bbData.designed_EB_Power, bbData.applied_EB_Temp, bbData.designed_EB_Temp) * InternalBlackbodyData.Emmisivity[i] * InternalBlackbodyData.Transmittance[i] * bbData.blackbody_QTH_Number;
         },
 
-        SphereArea(d) { //diameter
+        /**
+         * calculates sphere area from diameter
+         */
+        SphereArea(d) {
             return 4 * Math.PI * Math.pow(d / 2, 2);
         },
 
+        /**
+         * calcuales wall fraction of model
+         */
         WallFraction(mdl, units) {
             let exitArea = Math.PI * Math.pow(Calculator.Units.Convert(mdl.portDiameter, units.length, Length.CM) / 2, 2);
             let sArea = Calculator.Model.SphereArea(Calculator.Units.Convert(mdl.sphereDiameter, units.length, Length.CM));
@@ -221,6 +241,9 @@ var Calculator = {
             return (sArea - exitArea - inputPortArea) / sArea; //fixed
         },
 
+        /**
+         * finds reflectance at wavelength from data
+         */
         Reflectance(w, mdl, units) {
             let i = Math.round((w - (units.wavelength == Length.NM ? 250 : .25)) * (units.wavelength == Length.NM ? 1 : 1000));
             if (i < 0 || i > 2250) return 0;
@@ -241,6 +264,9 @@ var Calculator = {
             return ref;
         },
 
+        /**
+         * calculates spectral radiance at given wavelength
+         */
         SpectralRadiance(w, mdl, units) { //inches
             let i = Math.round((w - (units.wavelength == Length.NM ? 250 : .25)) * (units.wavelength == Length.NM ? 1 : 1000));
             let ref = Calculator.Model.Reflectance(w, mdl, units);
@@ -258,6 +284,9 @@ var Calculator = {
             return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
         },
 
+        /**
+         * calculates integral radiance between two wavelengths
+         */
         IntegralRadiance(a, b, mdl, units) {
             if (units.wavelength == Length.NM && (a < 250 || b > 2500) || units.wavelength == Length.UM && (a < .25 || b > 2.5)) return 0;
             let increment = (units.wavelength == Length.NM ? 1 : .001);
@@ -268,7 +297,9 @@ var Calculator = {
             return sum * increment;
         },
 
-
+        /**
+         * finds a model given the input requirements
+         */
         SpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
@@ -297,7 +328,7 @@ var Calculator = {
 
             let wl = [];
             let checkWl = lmps => wl.some(l => lmps.every(lmp => l.some(lm => lm == lmp)));
-            for (;;) {
+            for (; ;) {
                 iteration++;
                 if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
                 else wl.push(model.lamps.slice());
@@ -335,6 +366,9 @@ var Calculator = {
             }
         },
 
+        /**
+         * previous spectral reverse versions (not used)
+         */
         uSpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
@@ -360,7 +394,7 @@ var Calculator = {
 
             let constant = Math.PI * Calculator.Model.SphereArea(Calculator.Units.Convert(8, Length.IN, Length.CM));
             let predicate = (i, wF) => ReflectanceData.BaSO4[i] / (constant * (1 - ReflectanceData.BaSO4[i] * wF));
-            for (;;) {
+            for (; ;) {
                 //CHECK FLOW CONDITIONS
                 iteration++;
                 if (Calculator.Trace.Between(ut, lt, Calculator.Trace.Model(model))) return model;
@@ -403,6 +437,9 @@ var Calculator = {
             }
         },
 
+        /**
+         * previous spectral reverse versions (not used)
+         */
         mSpectralReverse(startModel, lt, ut, units) {
             lt = Calculator.Trace.Interpolate(lt);
             ut = Calculator.Trace.Interpolate(ut);
@@ -490,9 +527,15 @@ var Calculator = {
 
         },
 
-        InbandReverse() {},
+        /**
+         * Finds model given inband requirements (not implemented)
+         */
+        InbandReverse() { },
 
 
+        /**
+         * gives the string according to the index of a port
+         */
         IndexToPort(i) {
             switch (i) {
                 case 0:
@@ -520,6 +563,9 @@ var Calculator = {
             }
         },
 
+        /**
+         * returns the number of ports for a given sphere diameter
+         */
         GetNumPorts(sD) {
             switch (sD) {
                 case 6:
@@ -543,16 +589,63 @@ var Calculator = {
             }
         },
 
+        /**
+         * returns an array of wavelengths according to the given units
+         */
         GetWavelength(units) {
             return [...new Array(2250)].map((_, i) => 250 + i).map(w => Calculator.Units.Convert(w, Length.NM, units.wavelength));
         },
+
+        /**
+         * thermal calculations (not implemented)
+         */
+        Thermal(mdl, units) {
+            /*
+            Heat Input = K
+            Lamp Efficiency = K
+            Qcond = K
+            port frac = K (from model)
+            exit port diameter = K
+            Coating Internal Diameter = K
+
+
+
+            Exit Port Area = pi * (exit port diameter)^2 / 4 * .0254^2
+
+            Sphere Interior Area = pi * (Coating Internal Diameter)^2 * .0254^2
+
+
+            Inner Wall Temp = 
+            Conv Coeff = 
+
+
+            Radiated Power = (Heat Input) * (1 - (Lamp Efficiency))
+            
+            Power Into Sphere = (Radiated Power) * (1 - ((Exit Port Area) / (Sphere Interior Area)) * (Nom Ref) / (1 - (Nom Ref) * (1 - (port frac)))
+
+            Qconv = (Convection Coefficient) * (Sphere Exterior Area (m^2)) * ((Outer Temp (C) - (Ambient Temp (C))) 
+
+            Qrad = Math.E * (Sphere Exterior Area (m^2)) * (Stef Bolz Coeff) * (View Factor) * (((Outer Wall Temp) + 273)^4 - (Ambient Temp (in kelvin)^4)
+
+
+            Qport = if exit port diameter > 0  (Conv Coeff) * (exit port area (m^2)) * ((Inner Wall temp) - (Ambient Temp)) else 0
+             energy balance = (power in) - Qconv - Qrad - Qcond - Qport
+            */
+        }
+
     },
 
     Math: {
+        /**
+         * rounds according to sig figs
+         */
         Round(val, figs) {
             return Math.round(val * Math.pow(10, figs)) / Math.pow(10, figs);
         },
 
+        /**
+         * calculates CCT from model
+         */
         CCT(mdl, units) {
             let x = 0;
             let y = 0;
@@ -579,33 +672,51 @@ var Calculator = {
                 }
             return mindex;
         },
-
+        /**
+         * calculates Candelas from model
+         */
         Candelas(mdl, units) {
             return VLambdaData.reduce((sum, vlambda, i) => sum += Calculator.Units.Convert(Calculator.Model.SpectralRadiance(i * (units.wavelength == Length.NM ? 1 : .001) + (units.wavelength == Length.NM ? 250 : .25), mdl, units), units.radiance, Radiance.W_CM) * vlambda * 6830, 0);
         },
-
+        /**
+         * calculates Lumens from model
+         */
         Lumens(mdl, units) {
             return VLambdaData.reduce((sum, vlambda, i) => sum + mdl.lamps.reduce((lsum, l, j) => lsum + Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[j] * mdl.va[j], 0) * Calculator.Math.CBFilter(i) * vlambda, 0) * .683;
         },
-
+        /**
+         * calculates FootLamberts from model
+         */
         FootLamberts(mdl, units) {
             return Calculator.Math.Candelas(mdl, units) * 0.291885581;
         },
-
+        /**
+         * calculates Lux from model
+         */
         Lux(mdl, units) {
             return Calculator.Math.Candelas(mdl, units) * Math.PI;
         },
-
+        /**
+         * calculates CBFilter from wavelength
+         */
         CBFilter(w) {
             return 1;
         },
-
+        /**
+         * calculates irradiance between two wavelengths at a given distance from the exit port
+         */
         Irradiance(wA, wB, d, mdl, units) {
             return Calculator.Model.IntegralRadiance(wA, wB, mdl, units) * Math.PI * (d == 0 ? 1 : Math.pow(Math.sin(Math.atan(Calculator.Units.Convert(mdl.portDiameter, units.length, Length.M) / (2 * d))), 2));
         },
     },
 
     Trace: {
+        /**
+         * tests two traces with a given Test function
+         * test function compares y-values at every shared x-value and returns true or false (based on test)
+         * if every is true: all tests must return true for Compare to return true
+         * else: only one test must return true for Compare to return true  
+         */
         Compare(t1, t2, tF = (y1, y2) => y1 == y2, every = true) {
             let passed = every;
             for (let i = 0; i < t1.x.length; i++)
@@ -618,28 +729,43 @@ var Calculator = {
             return passed;
         },
 
+        /**
+         * not used
+         */
         Test(t, tF, every = true) {
             return t.y.reduce((passed, y) => every ? (!passed ? false : tF(y)) : (passed ? true : tF(y)), every);
         },
-
+        /**
+         * tests if every point on a trace is between an upper trace and lower trace
+         */
         Between(ut, lt, trace) {
             return Calculator.Trace.Compare(lt, trace, (y1, y2) => y1 <= y2, true) && Calculator.Trace.Compare(ut, trace, (y1, y2) => y1 >= y2, true);
         },
 
+        /**
+         * returns a new trace that is the sum of two traces at every y-value
+         */
         Sum(t1, t2) {
             let x = t1.x.filter(w => t2.x.includes(w));
             return { x: x, y: x.map(w => t1.y[t1.x.indexOf(w)] + t2.y[t2.x.indexOf(w)]) };
         },
-
+        /**
+         * returns a new trace that is the differences of two traces at every y-value
+         */
         Difference(t1, t2) {
             let x = t1.x.filter(w => t2.x.includes(w));
             return { x: x, y: x.map(w => t1.y[t1.x.indexOf(w)] - t2.y[t2.x.indexOf(w)]) };
         },
-
+        /**
+         * finds the error between two traces (difference)
+         */
         Error(t1, t2) {
             return Math.sqrt(Calculator.Trace.Difference(t1, t2).y.map(y => y * y).reduce((sum, y) => sum + y, 0));
         },
 
+        /**
+         * interpolates a trace (given a trace that is not defined at every x-value in its domain, interpolate to define at every x)
+         */
         Interpolate(t) {
             let ret = {};
             ret.x = t.x.slice();
@@ -659,6 +785,9 @@ var Calculator = {
             return Calculator.Trace.Sort(ret);
         },
 
+        /**
+         * sorts a trace so that all x-y pairs are in order of their x-value
+         */
         Sort(t) {
             let sorted = false;
             let temp = 0;
@@ -680,6 +809,7 @@ var Calculator = {
             return t;
         },
 
+        // creates a trace from a model
         Model(mdl, units = Calculator.Units.Default) {
             let wav = Calculator.Model.GetWavelength(units);
             let wF = Calculator.Model.WallFraction(mdl, units);
@@ -689,7 +819,7 @@ var Calculator = {
                 name: mdl.name,
                 x: wav,
                 y: wav.map((_, i) => {
-                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index] * mdl.va[index], 0) /* + blackbody flux */ )) / (piSA * (1 - ref[i] * wF));
+                    let wcm = (ref[i] * (mdl.lamps.reduce((sum, l, index) => sum += Calculator.Lamp.FluxAtIndex(l, i) * mdl.onQty[index] * mdl.va[index], 0) /* + blackbody flux */)) / (piSA * (1 - ref[i] * wF));
                     return Calculator.Units.Convert(wcm, Radiance.W_CM, units.radiance);
                 }),
                 units: units,
@@ -697,10 +827,12 @@ var Calculator = {
             }
         },
 
+        // creates an empty trace
         Empty() {
             return { name: '', x: [], y: [], units: Calculator.Units.Default, color: 'black' };
         },
 
+        // converts a trace to given units
         Convert(trace, units) {
             return {
                 name: 'name' in trace ? trace.name : '',
@@ -711,6 +843,7 @@ var Calculator = {
             }
         },
 
+        // copies a trace
         Copy(trace) {
             return {
                 x: trace.x.slice(),
@@ -723,11 +856,13 @@ var Calculator = {
     },
 
     Lamp: {
+        // gets flux array of lamp
         Flux(name) {
             if (name in FluxData) return FluxData[name];
             else return Calculator.Lamp.Flux('HIS-010').map(_ => 0);
         },
 
+        // finds the flux between two wavelengths of a given lamp
         FluxBetween(name, wA, wB) {
             let scale = wA >= 250 ? 1 : 1000;
             let shift = wA >= 250 ? 250 : .25;
@@ -735,6 +870,7 @@ var Calculator = {
             else return Calculator.Lamp.FluxBetween('HIS-010', wA, wB).map(_ => 0);
         },
 
+        // gets the flux of a lamp at a given wavelength
         FluxAtWavelength(name, w) {
             if (name == 'Empty') return 0;
             if (name.substring(0, 11) == 'Custom Lamp') {
@@ -743,6 +879,8 @@ var Calculator = {
             }
             return FluxData[name][Math.round((w - (w >= 250 ? 250 : .25)) * (w >= 250 ? 1 : 1000))];
         },
+
+        // gets flux of lamp at given index
         FluxAtIndex(name, i) {
             if (name == 'Empty') return 0;
             if (name.substring(0, 11) == 'Custom Lamp') {
@@ -752,10 +890,12 @@ var Calculator = {
             return FluxData[name][i];
         },
 
+        // sums fluxs of lamps
         Sum(lamps) {
             return lamps.reduce((acc, l) => acc.map((a, i) => a + Calculator.Lamp.Flux(l)[i]), Calculator.Lamp.Flux('-'));
         },
 
+        // sums fluxes of lamps between two wavelengths
         SumBetween(lamps, wA, wB) {
             return lamps.reduce((acc, l) => {
                 let fB = Calculator.Lamp.FluxBetween(l, wA, wB);
@@ -763,6 +903,7 @@ var Calculator = {
             }, Calculator.Lamp.FluxBetween('-', wA, wB));
         },
 
+        // gets specs of lamp
         Specs(name) {
             if (name in LampData) return LampData[name];
             else return null;
